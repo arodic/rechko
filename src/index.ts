@@ -38,7 +38,7 @@ Array.from({ length: 5 }, () => ({
   state: LetterState.INITIAL
 })));
 
-const allHistory = history.loadAll();
+let allHistory = history.loadAll();
 
 const replaceLatinKeys = [
   ['q','w','e','r','t','y','u','i','o','p','š','đ','ž','a','s','d','f','g','h','j','k','l','č','ć','x','c','v','b','n','m'],
@@ -50,13 +50,6 @@ const replaceEnglishKeys = [
   ['љ','њ','е','р','т','з','у','и','о','п','ш','ђ','ж','а','с','д','ф','г','х','ј','к','л','ч','ћ','џ','ц','в','б','н','м']
 ];
 
-const icons = {
-  [LetterState.CORRECT]: '🟩',
-  [LetterState.PRESENT]: '🟨',
-  [LetterState.ABSENT]: '⬜',
-  [LetterState.INITIAL]: null
-};
-
 export class RechkoApp extends IoElement {
   static get Style() {
     return /* css */`
@@ -67,6 +60,7 @@ export class RechkoApp extends IoElement {
         flex-direction: column;
         background: var(--io-background-color);
         color: var(--io-color);
+        overflow: hidden;
       }
       :host > header {
         border-bottom: 1px solid var(--io-color-border);
@@ -93,6 +87,19 @@ export class RechkoApp extends IoElement {
       :host > .spacer {
         flex: 1;
       }
+      :host > .message {
+        position: absolute;
+        left: 50%;
+        top: 80px;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.85);
+        padding: 16px 20px;
+        z-index: 2;
+        border-radius: 4px;
+        transform: translateX(-50%);
+        transition: opacity 0.3s ease-out;
+        font-weight: 600;
+      }
       :host[colorblindmode] rechko-board .correct {
         background-color: #f5793a !important;
       }
@@ -116,19 +123,14 @@ export class RechkoApp extends IoElement {
       shakeRowIndex: -1,
       letterStates: Object,
       allowInput: true,
-
-      // message: '',
-      // result: '',
-      // grid: '',
-
+      message: '',
       showGDPR: JSON.parse(localStorage.getItem('show-gdpr') || 'true'),
       cookiesRequired: JSON.parse(localStorage.getItem('cookiesRequired') || 'true'),
       cookiesImprovement: JSON.parse(localStorage.getItem('cookiesImprovement') || 'true'),
       cookiesAnalitics: JSON.parse(localStorage.getItem('cookiesAnalitics') || 'true'),
       showHelp: false,
-      showStats: true,
+      showStats: false,
       showSettings: false,
-
       hardMode: JSON.parse(localStorage.getItem('hardMode') || 'false'),
       darkTheme: JSON.parse(localStorage.getItem('darkTheme') || 'false'),
       colorblindMode: {
@@ -204,17 +206,18 @@ export class RechkoApp extends IoElement {
       const guess = this.currentRow.map((tile: any) => tile.letter).join('')
       if (!allWords.includes(guess) && guess !== answer) {
         this.shake();
-        if (this.cookiesImprovement) fetch(`/word_nok/${guess}`);
-        // showMessage(`Реч није на листи`);
-        return
+        this.showMessage(`Реч није на листи`);
+        // if (this.cookiesImprovement) fetch(`/word_nok/${guess}`);
+        return;
       }
-      if (this.cookiesImprovement) fetch(`/word_ok/${guess}`);
+      // if (this.cookiesImprovement) fetch(`/word_ok/${guess}`);
       this.completeGame();
+      history.save(board);
+      allHistory = history.loadAll();
     } else {
       this.shake();
-      // showMessage('Нема довољно слова')
+      this.showMessage('Нема довољно слова')
     }
-    history.save(board);
   }
   completeGame() {
     // Reset state
@@ -261,15 +264,8 @@ export class RechkoApp extends IoElement {
       if (row.every((tile: any) => tile.state === LetterState.CORRECT)) {
         // game win
         this.allowInput = false;
-        // const lastWord = row[0].letter + row[1].letter + row[2].letter + row[3].letter + row[4].letter;
         setTimeout(() => {
-          // grid = genResultGrid()
-          // showResult(
-          //   ['Генијално!', 'Величанствено!', 'Импресивно!', 'Одлично!', 'Браво!', 'Није лоше!'][
-          //     this.currentRowIndex
-          //   ],
-          //   -1
-          // );l
+          this.showStats = true;
         }, 1600);
         return;
       }
@@ -277,8 +273,9 @@ export class RechkoApp extends IoElement {
         if (this.currentRowIndex === 6) {
           // game over
           this.allowInput = false;
-          // const lastWord = row[0].letter + row[1].letter + row[2].letter + row[3].letter + row[4].letter;
-          // showResult(answer.toUpperCase(), -1);
+          setTimeout(() => {
+            this.showStats = true;
+          }, 1600);
           return;
         } else {
           // continue play
@@ -316,27 +313,14 @@ export class RechkoApp extends IoElement {
   onHideSettings() {
     this.showSettings = false;
   }
-  showMessage(msg: string, time = 250) {
+  onMessage(event: CustomEvent) {
+    this.showMessage(event.detail.message);
+  }
+  showMessage(msg: string, time = 1000) {
     this.message = msg
     if (time > 0) {
       setTimeout(() => {
         this.message = ''
-      }, time)
-    }
-  }
-  share() {
-    var dateObj = new Date();
-    var month = dateObj.getUTCMonth() + 1;
-    var day = dateObj.getUTCDate();
-    var year = dateObj.getUTCFullYear();
-    navigator.clipboard.writeText(`@rechko_igra\n${day}/${month}/${year}\n${this.grid}`);
-    this.showMessage('Резултат копиран', 2000)
-  }
-  showResult(msg: string, time = 250) {
-    this.result = msg
-    if (time > 0) {
-      setTimeout(() => {
-        this.result = ''
       }, time)
     }
   }
@@ -357,7 +341,6 @@ export class RechkoApp extends IoElement {
   currentRowIndexChanged() {
     this.currentRow = this.board[this.currentRowIndex];
   }
-  currentRowChanged() {}
   changed() {
     const modalOpen = this.showGDPR || this.showHelp || this.showStats || this.showSettings;
     this.template([
@@ -383,6 +366,9 @@ export class RechkoApp extends IoElement {
       this.showHelp ? ['rechko-help', {'on-close': this.onHideHelp}] : null,
       this.showStats ? ['rechko-stats', {
         'on-close': this.onHideStats,
+        'on-message': this.onMessage,
+        answer: answer,
+        board: this.board,
         history: allHistory
       }] : null,
       this.showSettings ? ['rechko-settings', {
@@ -391,6 +377,7 @@ export class RechkoApp extends IoElement {
         darkTheme: this.bind('darkTheme'),
         colorblindMode: this.bind('colorblindMode'),
       }] : null,
+      this.message ? ['div', {class: 'message'}, this.message] : null
     ]);
   }
 }

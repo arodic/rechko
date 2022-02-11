@@ -1,37 +1,32 @@
-import {IoElement, RegisterIoElement} from '@iogui/iogui';
+import {RegisterIoElement} from '@iogui/iogui';
+import {RechkoPopup} from './popup';
 
-export class RechkoSettings extends IoElement {
+export class RechkoSettings extends RechkoPopup {
   static get Style() {
     return /* css */`
-      :host {
+      :host io-switch {
+        --io-line-height: 30px;
+        --io-item-height: 40px;
+      }
+      :host .option:first-of-type {
+        border-top: 1px solid var(--io-color-border);
+      }
+      :host .option {
         display: flex;
-        flex-direction: column;
-        position: absolute;
-        background: var(--io-background-color);
-        padding: 2em;
-        top: 3.4em;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        overflow: auto;
-      }
-      :host h3 {
-        font-size: 1.4rem;
-      }
-      :host p {
-        font-size: 1.1rem;
-        line-height: 1.2em;
-        margin: 0.5em 0;
-      }
-      :host .switchbox {
         text-align: left;
         white-space: nowrap;
-        margin: 2em;
+        font-size: 1.3em;
+        line-height: 3em;
+        border-bottom: 1px solid var(--io-color-border);
       }
-      :host io-icon {
-        position: absolute;
-        top: 1em;
-        right: 1em;
+      :host .option > span {
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      :host .option > io-switch {
+        margin-top: 1em;
+        flex-shrink: 0;
       }
     `;
   }
@@ -43,26 +38,17 @@ export class RechkoSettings extends IoElement {
       cookiesRequired: true,
     }
   }
-  onClose() {
-    this.dispatchEvent('close');
-  }
   changed() {
     this.template([
       ['io-icon', {icon: 'icons:close', 'on-click': this.onClose}],
       ['h3', 'Подешавања'],
-      ['div', {class: 'switchbox'}, [
-        // ['div', [
-        //   ['io-switch', {value: this.bind('hardMode')}],
-        //   ['io-item', 'тежак режим игре'],
-        // ]],
-        ['div', [
-          ['io-switch', {value: this.bind('darkTheme')}],
-          ['io-item', 'ноћни режим боја'],
-        ]],
-        ['div', [
-          ['io-switch', {value: this.bind('colorblindMode')}],
-          ['io-item', 'режим боја за далтонисте'],
-        ]]
+      ['div', {class: 'option'}, [
+        ['span', 'Тамна тема'],
+        ['io-switch', {value: this.bind('darkTheme')}],
+      ]],
+      ['div', {class: 'option'}, [
+        ['span', 'Боје високог контраста'],
+        ['io-switch', {value: this.bind('colorblindMode')}],
       ]]
     ]);
   }

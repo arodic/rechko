@@ -1,23 +1,10 @@
-import {IoElement, RegisterIoElement} from '@iogui/iogui';
-import { LetterState } from '../types'
+import {RegisterIoElement} from '@iogui/iogui';
+import {LetterState} from '../types'
+import {RechkoPopup} from './popup';
 
-export class RechkoHelp extends IoElement {
+export class RechkoHelp extends RechkoPopup {
   static get Style() {
     return /* css */`
-      :host {
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        background: var(--io-background-color);
-        padding: 2em;
-        top: 3.4em;
-        bottom: 0;
-        left: 0;
-        right: 0;
-      }
-      :host h3 {
-        font-size: 1.4rem;
-      }
       :host p {
         font-size: 1.0rem;
         line-height: 1.2em;
@@ -29,20 +16,12 @@ export class RechkoHelp extends IoElement {
         margin-top: 1.5em;
         padding-top: 1.5em;
       }
-      :host io-icon {
-        position: absolute;
-        top: 1em;
-        right: 1em;
-      }
       :host rechko-board {
         grid-template-rows: repeat(1, 1fr);
         margin-top: 1em;
         --height: min(340px, calc(var(--vh, 100vh) - 310px));
       }
     `;
-  }
-  onClose() {
-    this.dispatchEvent('close');
   }
   changed() {
     this.template([

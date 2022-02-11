@@ -1,21 +1,4 @@
-const defaultMessage = 'Using word of the day instead.'
-
 export function getWordOfTheDay() {
-  // if (location.search) {
-  //   try {
-  //     const query = decodeURIComponent(location.search.slice(1))
-  //     if (query.length !== 5) {
-  //       alert(`Incorrect word length from encoded query. ${defaultMessage}`)
-  //     } else if (!allWords.includes(query)) {
-  //       alert(`Encoded query is not in the word list. ${defaultMessage}`)
-  //     } else {
-  //       return query
-  //     }
-  //   } catch (e) {
-  //     alert(`Malformed encoded word query. ${defaultMessage}`)
-  //   }
-  // }
-
   const now = new Date()
   const start = new Date(2022, 0, 24)
   const diff = Number(now) - Number(start)
@@ -44,11 +27,11 @@ const answers = [
   'грмаљ',
   'излет',
   'гуска',
-  'сукње',
-  'басна',
-  'радар',
-  'даске',
-  'волим',
+  'ракун',
+  'попај', 
+  'клема',
+  'емоџи',
+  'гирос',
 ]
 
 const extraAllowedGuesses = [

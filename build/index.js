@@ -3480,20 +3480,6 @@ class IoIcon extends IoElement {
 RegisterIoElement(IoIcon);
 
 function getWordOfTheDay() {
-    // if (location.search) {
-    //   try {
-    //     const query = decodeURIComponent(location.search.slice(1))
-    //     if (query.length !== 5) {
-    //       alert(`Incorrect word length from encoded query. ${defaultMessage}`)
-    //     } else if (!allWords.includes(query)) {
-    //       alert(`Encoded query is not in the word list. ${defaultMessage}`)
-    //     } else {
-    //       return query
-    //     }
-    //   } catch (e) {
-    //     alert(`Malformed encoded word query. ${defaultMessage}`)
-    //   }
-    // }
     const now = new Date();
     const start = new Date(2022, 0, 24);
     const diff = Number(now) - Number(start);
@@ -3521,11 +3507,11 @@ const answers = [
     'грмаљ',
     'излет',
     'гуска',
-    'сукње',
-    'басна',
-    'радар',
-    'даске',
-    'волим',
+    'ракун',
+    'попај',
+    'клема',
+    'емоџи',
+    'гирос',
 ];
 const extraAllowedGuesses = [
     'речко',
@@ -21705,10 +21691,10 @@ const allWords = [...answers, ...allowedGuesses, ...extraAllowedGuesses];
 class GameHistory {
     save(board) {
         const day = Math.floor(Number(new Date()) / (1000 * 60 * 60 * 24));
-        const savedHistory = localStorage.getItem('game-history');
+        const savedHistory = localStorage.getItem('game-history-v2');
         const history = savedHistory ? JSON.parse(savedHistory) : {};
         history[day] = board;
-        localStorage.setItem('game-history', JSON.stringify(history));
+        localStorage.setItem('game-history-v2', JSON.stringify(history));
     }
     loadToday() {
         const history = this.loadAll();
@@ -21716,7 +21702,7 @@ class GameHistory {
         return history[day];
     }
     loadAll() {
-        const savedHistory = localStorage.getItem('game-history');
+        const savedHistory = localStorage.getItem('game-history-v2');
         const history = savedHistory ? JSON.parse(savedHistory) : {};
         return history;
     }
@@ -21904,7 +21890,7 @@ class RechkoKey extends IoElement {
         align-items: center;
         text-transform: uppercase;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
-        transition: all .2s 1.5s;
+        /* transition: all .2s 1.5s; */
       }
       :host io-icon {
         margin: auto;
@@ -21972,7 +21958,7 @@ class RechkoKeyboard extends IoElement {
       :host {
         display: flex;
         flex-direction: column;
-        margin: 30px 6px 8px 6px;
+        margin: 2.427em 1em 1.5em 1em;
         user-select: none;
       }
       :host > div {
@@ -22005,7 +21991,7 @@ class RechkoKeyboard extends IoElement {
 }
 RegisterIoElement(RechkoKeyboard);
 
-class RechkoGdpr extends IoElement {
+class RechkoPopup extends IoElement {
     static get Style() {
         return /* css */ `
       :host {
@@ -22013,11 +21999,19 @@ class RechkoGdpr extends IoElement {
         flex-direction: column;
         position: absolute;
         background: var(--io-background-color);
-        padding: 2em;
+        padding: 0 2em;
         top: 3.4em;
+        opacity: 0;
         bottom: 0;
         left: 0;
         right: 0;
+        will-change: transform;
+        transform: translate3d(0, 200px, 0);
+        transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+      }
+      :host[show] {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
       }
       :host h3 {
         font-size: 1.4rem;
@@ -22027,44 +22021,107 @@ class RechkoGdpr extends IoElement {
         line-height: 1.2em;
         margin: 0.5em 0;
       }
+      :host > io-icon {
+        position: absolute;
+        top: 1em;
+        right: 1em;
+      }
+    `;
+    }
+    static get Properties() {
+        return {
+            show: {
+                value: false,
+                reflect: 1
+            }
+        };
+    }
+    connectedCallback() {
+        super.connectedCallback();
+        setTimeout(() => {
+            this.show = true;
+        });
+    }
+    onClose() {
+        this.show = false;
+        setTimeout(() => {
+            this.dispatchEvent('close');
+        }, 250);
+    }
+    changed() {
+        this.template([
+            ['h3', 'Title'],
+            ['p', 'Paragraph.'],
+        ]);
+    }
+}
+RegisterIoElement(RechkoPopup);
+
+class RechkoGdpr extends RechkoPopup {
+    static get Style() {
+        return /* css */ `
       :host p:last-of-type {
-        flex: 1;
+        margin-bottom: 2em;
+      }
+      :host .buttons {
+        display: flex;
+        margin: 2em 0;
       }
       :host io-button {
         --io-spacing: 1em;
         --io-item-height: 3.5em;
-        width: 10em;
-        margin: 1em 0.25em;
-        padding-left: 0;
-        padding-right: 0;
+        flex: 1;  
         font-weight: bold;
-        color: var(--io-color-light);
-        background: rgb(30, 185, 50);
+        color: #ffffff;
+        background: #6aaa64;
+        border: none;
+        border-radius: 4px;
       }
       :host io-button:first-of-type {
-        background: rgb(225, 90, 60);
+        background: #ee5a34;
+        margin-right: 1em;
       }
-      :host .switchbox {
+      :host io-switch {
+        --io-line-height: 30px;
+        --io-item-height: 40px;
+      }
+      :host .option:first-of-type {
+        border-top: 1px solid var(--io-color-border);
+      }
+      :host .option {
+        display: flex;
         text-align: left;
         white-space: nowrap;
-        margin: 2em;
+        font-size: 1.3em;
+        line-height: 3em;
+        border-bottom: 1px solid var(--io-color-border);
+      }
+      :host .option > span {
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      :host .option > io-switch {
+        margin-top: 1em;
+        flex-shrink: 0;
       }
       @media (max-width: 500px) {
-        :host h3 {
-          font-size: 1.2rem;
-          margin: 0.5em 0;
-        }
         :host p {
-          font-size: 0.9rem;
           margin: 0.5em 0;
         }
         :host io-button {
-          margin: 0.25em;
+          font-size: 0.7em;
+          line-height: 1.4em;
         }
       }
-      @media (max-width: 450px) {
-        :host .switchbox {
-          margin: 2em 0em;
+      @media (max-width: 360px) {
+        :host io-button {
+          font-size: 0.6em;
+          line-height: 1.6em;
+        }
+        :host .option span {
+          font-size: 0.7em;
+          line-height: 4em;
         }
       }
     `;
@@ -22102,24 +22159,21 @@ class RechkoGdpr extends IoElement {
     changed() {
         this.template([
             ['h3', 'Ова веб страница користи колачиће'],
-            ['p', 'Користимо колачиће како би побољшали Речка.'],
-            ['p', 'Сакупљамо речи које корисници открију да не постоје у постојећој бази.'],
-            ['p', 'Страница такође користи и Google Analytics услуге. Сви подаци се користе искључиво у статистичке сврхе, за побољшање искуства играња и не деле се ни са једном компанијом, друштвом или неком трећом групом.'],
-            ['div', { class: 'switchbox' }, [
-                    ['div', [
-                            ['io-switch', { value: this.bind('cookiesRequired'), disabled: true }],
-                            ['io-item', 'Hеопходни колачићи']
-                        ]],
-                    ['div', [
-                            ['io-switch', { value: this.bind('cookiesImprovement') }],
-                            ['io-item', 'Cакупљање унетих речи']
-                        ]],
-                    ['div', [
-                            ['io-switch', { value: this.bind('cookiesAnalitics') }],
-                            ['io-item', 'Аналитички колачићи']
-                        ]],
+            ['p', 'Користимо колачиће како би побољшали Речка. Сакупљамо речи које корисници открију да не постоје у постојећој бази.'],
+            ['p', 'Страница користи и Google Analytics услуге. Сви подаци се користе искључиво у статистичке сврхе, за побољшање искуства играња и не деле се ни са једном компанијом, друштвом или неком трећом групом.'],
+            ['div', { class: 'option' }, [
+                    ['span', 'Hеопходни колачићи'],
+                    ['io-switch', { value: this.bind('cookiesRequired'), disabled: true }],
                 ]],
-            ['div', [
+            ['div', { class: 'option' }, [
+                    ['span', 'Cакупљање речи'],
+                    ['io-switch', { value: this.bind('cookiesImprovement') }],
+                ]],
+            ['div', { class: 'option' }, [
+                    ['span', 'Аналитички колачићи'],
+                    ['io-switch', { value: this.bind('cookiesAnalitics') }],
+                ]],
+            ['div', { class: 'buttons' }, [
                     ['io-button', { label: 'НЕ ПРИХВАТАМ', action: this.onDecline }],
                     ['io-button', { label: 'ПРИХВАТАМ', id: 'accept', action: this.onAccept }],
                 ]]
@@ -22128,23 +22182,9 @@ class RechkoGdpr extends IoElement {
 }
 RegisterIoElement(RechkoGdpr);
 
-class RechkoHelp extends IoElement {
+class RechkoHelp extends RechkoPopup {
     static get Style() {
         return /* css */ `
-      :host {
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        background: var(--io-background-color);
-        padding: 2em;
-        top: 3.4em;
-        bottom: 0;
-        left: 0;
-        right: 0;
-      }
-      :host h3 {
-        font-size: 1.4rem;
-      }
       :host p {
         font-size: 1.0rem;
         line-height: 1.2em;
@@ -22156,20 +22196,12 @@ class RechkoHelp extends IoElement {
         margin-top: 1.5em;
         padding-top: 1.5em;
       }
-      :host io-icon {
-        position: absolute;
-        top: 1em;
-        right: 1em;
-      }
       :host rechko-board {
         grid-template-rows: repeat(1, 1fr);
         margin-top: 1em;
         --height: min(340px, calc(var(--vh, 100vh) - 310px));
       }
     `;
-    }
-    onClose() {
-        this.dispatchEvent('close');
     }
     changed() {
         this.template([
@@ -22210,36 +22242,32 @@ class RechkoHelp extends IoElement {
 }
 RegisterIoElement(RechkoHelp);
 
-class RechkoStats extends IoElement {
+const ICONS = {
+    ["correct" /* CORRECT */]: '🟩',
+    ["present" /* PRESENT */]: '🟨',
+    ["absent" /* ABSENT */]: '⬜',
+    [0 /* INITIAL */]: null
+};
+class RechkoStats extends RechkoPopup {
     static get Style() {
         return /* css */ `
-      :host {
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        background: var(--io-background-color);
-        padding: 2em;
-        top: 3.4em;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        overflow: auto;
-      }
-      :host h3 {
-        margin: 1em 0;
-        font-size: 1.4rem;
-      }
       :host h4 {
         margin: 1em 0;
         font-size: 1.2rem;
       }
+      :host .board {
+        white-space: pre;
+        line-height: 1.2em;
+      }
       :host .grid {
+        margin: 0 auto;
+        width: 19em;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(2, 1fr);
       }
       :host .grid .count {
-        font-size: 3rem;
+        font-size: 2rem;
       }
       :host .distribution > div {
         display: flex;
@@ -22254,24 +22282,47 @@ class RechkoStats extends IoElement {
         margin-left: 0.5em;
         text-align: right;
       }
-      :host io-icon {
-        position: absolute;
-        top: 1em;
-        right: 1em;
+      :host > button {
+        margin: 1em auto;
+        width: 8em;
+        border: none;
+        border-radius: 3px;
+        font-size: 1.2em;
+        background: #6aaa64;
+        font-weight: bold;
+        color: #ffffff;
+        cursor: pointer;
+      }
+      :host > button svg {
+        fill: #ffffff;
+
+      }
+      :host > button > span {
+        line-height: 2.4em;
+      }
+      :host > button > io-icon {
+        margin-left: 0.5em;
+        margin-bottom: -0.5em;
       }
     `;
     }
     static get Properties() {
         return {
+            message: '',
+            answer: '',
+            win: false,
+            boardGrid: '',
+            shareText: '',
+            board: {
+                value: [],
+                observe: true
+            },
             history: Object,
             gamesStarted: 0,
             gamesFinished: 0,
             gamesWon: 0,
             gameStats: [0, 0, 0, 0, 0, 0]
         };
-    }
-    onClose() {
-        this.dispatchEvent('close');
     }
     historyChanged() {
         let gamesStarted = 0;
@@ -22302,11 +22353,55 @@ class RechkoStats extends IoElement {
             gameStats: gameStats,
         });
     }
+    async onShare() {
+        try {
+            await navigator.share({
+                text: this.shareText
+            });
+        }
+        catch (err) {
+            navigator.clipboard.writeText(this.shareText);
+            this.dispatchEvent('message', { message: 'Резултат копиран' });
+        }
+    }
+    boardChanged() {
+        this.boardMutated();
+    }
+    boardMutated() {
+        const dateObj = new Date();
+        const month = dateObj.getUTCMonth() + 1;
+        const day = dateObj.getUTCDate();
+        const year = dateObj.getUTCFullYear();
+        let lastIndex = -1;
+        this.win = false;
+        let finish = false;
+        this.board.forEach((row, i) => {
+            if (row.every((tile) => tile.state !== 0 /* INITIAL */)) {
+                lastIndex++;
+            }
+            if (row.every((tile) => tile.state === "correct" /* CORRECT */)) {
+                this.win = true;
+            }
+        });
+        if (this.board[5].every((tile) => (tile.state !== "correct" /* CORRECT */ && tile.state !== 0 /* INITIAL */))) {
+            finish = true;
+        }
+        this.message = this.win ? ['Генијално!', 'Величанствено!', 'Импресивно!', 'Одлично!', 'Браво!', 'Није лоше!'][lastIndex] : finish ? this.answer : '';
+        this.boardGrid = this.board
+            .slice(0, lastIndex + 1)
+            .map((row) => {
+            return row.map((tile) => ICONS[tile.state]).join('');
+        })
+            .join('\n');
+        this.shareText = `@rechko_igra\n${day}/${month}/${year}\n${this.boardGrid}`;
+    }
     changed() {
         const maxGuess = this.gameStats.reduce(function (a, b) {
             return Math.max(a, b);
         }, -Infinity);
         this.template([
+            ['h2', { class: 'answer' }, this.message],
+            ['div', { class: 'board' }, this.boardGrid],
             ['h3', 'Статистика'],
             ['div', { class: 'grid' }, [
                     ['span', { class: 'count' }, String(this.gamesStarted)],
@@ -22318,63 +22413,49 @@ class RechkoStats extends IoElement {
                 ]],
             ['h4', 'Дистрибуција погодака:'],
             ['div', { class: 'distribution' }, [
-                    ['div', [
-                            ['span', '1'], ['span', { style: { flex: this.gameStats[0] / maxGuess } }, String(this.gameStats[0])]
-                        ]],
-                    ['div', [
-                            ['span', '2'], ['span', { style: { flex: this.gameStats[1] / maxGuess } }, String(this.gameStats[1])]
-                        ]],
-                    ['div', [
-                            ['span', '3'], ['span', { style: { flex: this.gameStats[2] / maxGuess } }, String(this.gameStats[2])]
-                        ]],
-                    ['div', [
-                            ['span', '4'], ['span', { style: { flex: this.gameStats[3] / maxGuess } }, String(this.gameStats[3])]
-                        ]],
-                    ['div', [
-                            ['span', '5'], ['span', { style: { flex: this.gameStats[4] / maxGuess } }, String(this.gameStats[4])]
-                        ]],
-                    ['div', [
-                            ['span', '6'], ['span', { style: { flex: this.gameStats[5] / maxGuess } }, String(this.gameStats[5])]
-                        ]],
+                    ['div', [['span', '1'], ['span', { style: { flex: this.gameStats[0] / maxGuess } }, String(this.gameStats[0])]]],
+                    ['div', [['span', '2'], ['span', { style: { flex: this.gameStats[1] / maxGuess } }, String(this.gameStats[1])]]],
+                    ['div', [['span', '3'], ['span', { style: { flex: this.gameStats[2] / maxGuess } }, String(this.gameStats[2])]]],
+                    ['div', [['span', '4'], ['span', { style: { flex: this.gameStats[3] / maxGuess } }, String(this.gameStats[3])]]],
+                    ['div', [['span', '5'], ['span', { style: { flex: this.gameStats[4] / maxGuess } }, String(this.gameStats[4])]]],
+                    ['div', [['span', '6'], ['span', { style: { flex: this.gameStats[5] / maxGuess } }, String(this.gameStats[5])]]],
                 ]],
             ['io-icon', { icon: 'icons:close', 'on-click': this.onClose }],
+            this.win ? ['button', { 'on-click': this.onShare }, [
+                    ['span', 'Подели'],
+                    ['io-icon', { icon: 'buttons:share' }]
+                ]] : null,
         ]);
     }
 }
 RegisterIoElement(RechkoStats);
 
-class RechkoSettings extends IoElement {
+class RechkoSettings extends RechkoPopup {
     static get Style() {
         return /* css */ `
-      :host {
+      :host io-switch {
+        --io-line-height: 30px;
+        --io-item-height: 40px;
+      }
+      :host .option:first-of-type {
+        border-top: 1px solid var(--io-color-border);
+      }
+      :host .option {
         display: flex;
-        flex-direction: column;
-        position: absolute;
-        background: var(--io-background-color);
-        padding: 2em;
-        top: 3.4em;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        overflow: auto;
-      }
-      :host h3 {
-        font-size: 1.4rem;
-      }
-      :host p {
-        font-size: 1.1rem;
-        line-height: 1.2em;
-        margin: 0.5em 0;
-      }
-      :host .switchbox {
         text-align: left;
         white-space: nowrap;
-        margin: 2em;
+        font-size: 1.3em;
+        line-height: 3em;
+        border-bottom: 1px solid var(--io-color-border);
       }
-      :host io-icon {
-        position: absolute;
-        top: 1em;
-        right: 1em;
+      :host .option > span {
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      :host .option > io-switch {
+        margin-top: 1em;
+        flex-shrink: 0;
       }
     `;
     }
@@ -22386,26 +22467,17 @@ class RechkoSettings extends IoElement {
             cookiesRequired: true,
         };
     }
-    onClose() {
-        this.dispatchEvent('close');
-    }
     changed() {
         this.template([
             ['io-icon', { icon: 'icons:close', 'on-click': this.onClose }],
             ['h3', 'Подешавања'],
-            ['div', { class: 'switchbox' }, [
-                    // ['div', [
-                    //   ['io-switch', {value: this.bind('hardMode')}],
-                    //   ['io-item', 'тежак режим игре'],
-                    // ]],
-                    ['div', [
-                            ['io-switch', { value: this.bind('darkTheme') }],
-                            ['io-item', 'ноћни режим боја'],
-                        ]],
-                    ['div', [
-                            ['io-switch', { value: this.bind('colorblindMode') }],
-                            ['io-item', 'режим боја за далтонисте'],
-                        ]]
+            ['div', { class: 'option' }, [
+                    ['span', 'Тамна тема'],
+                    ['io-switch', { value: this.bind('darkTheme') }],
+                ]],
+            ['div', { class: 'option' }, [
+                    ['span', 'Боје високог контраста'],
+                    ['io-switch', { value: this.bind('colorblindMode') }],
                 ]]
         ]);
     }
@@ -22424,6 +22496,9 @@ IoIconsetSingleton.registerIcons('buttons', /* html */ `
   <g id="settings">
     <path fill="var(--color-tone-3)" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"></path>
   </g>
+  <g id="share">
+    <path fill="var(--white)" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92zM18 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM6 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 7.02c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"></path>
+  </g>
 </svg>
 `);
 
@@ -22440,7 +22515,7 @@ const board = history$1.loadToday() || Array.from({ length: 6 }, () => Array.fro
     letter: '',
     state: 0 /* INITIAL */
 })));
-const allHistory = history$1.loadAll();
+let allHistory = history$1.loadAll();
 const replaceLatinKeys = [
     ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'š', 'đ', 'ž', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'č', 'ć', 'x', 'c', 'v', 'b', 'n', 'm'],
     ['љ', 'њ', 'е', 'р', 'т', 'з', 'у', 'и', 'о', 'п', 'ш', 'ђ', 'ж', 'а', 'с', 'д', 'ф', 'г', 'х', 'ј', 'к', 'л', 'ч', 'ћ', 'џ', 'ц', 'в', 'б', 'н', 'м']
@@ -22459,6 +22534,7 @@ class RechkoApp extends IoElement {
         flex-direction: column;
         background: var(--io-background-color);
         color: var(--io-color);
+        overflow: hidden;
       }
       :host > header {
         border-bottom: 1px solid var(--io-color-border);
@@ -22485,6 +22561,19 @@ class RechkoApp extends IoElement {
       :host > .spacer {
         flex: 1;
       }
+      :host > .message {
+        position: absolute;
+        left: 50%;
+        top: 80px;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.85);
+        padding: 16px 20px;
+        z-index: 2;
+        border-radius: 4px;
+        transform: translateX(-50%);
+        transition: opacity 0.3s ease-out;
+        font-weight: 600;
+      }
       :host[colorblindmode] rechko-board .correct {
         background-color: #f5793a !important;
       }
@@ -22508,15 +22597,13 @@ class RechkoApp extends IoElement {
             shakeRowIndex: -1,
             letterStates: Object,
             allowInput: true,
-            // message: '',
-            // result: '',
-            // grid: '',
+            message: '',
             showGDPR: JSON.parse(localStorage.getItem('show-gdpr') || 'true'),
             cookiesRequired: JSON.parse(localStorage.getItem('cookiesRequired') || 'true'),
             cookiesImprovement: JSON.parse(localStorage.getItem('cookiesImprovement') || 'true'),
             cookiesAnalitics: JSON.parse(localStorage.getItem('cookiesAnalitics') || 'true'),
             showHelp: false,
-            showStats: true,
+            showStats: false,
             showSettings: false,
             hardMode: JSON.parse(localStorage.getItem('hardMode') || 'false'),
             darkTheme: JSON.parse(localStorage.getItem('darkTheme') || 'false'),
@@ -22596,20 +22683,19 @@ class RechkoApp extends IoElement {
             const guess = this.currentRow.map((tile) => tile.letter).join('');
             if (!allWords.includes(guess) && guess !== answer) {
                 this.shake();
-                if (this.cookiesImprovement)
-                    fetch(`/word_nok/${guess}`);
-                // showMessage(`Реч није на листи`);
+                this.showMessage(`Реч није на листи`);
+                // if (this.cookiesImprovement) fetch(`/word_nok/${guess}`);
                 return;
             }
-            if (this.cookiesImprovement)
-                fetch(`/word_ok/${guess}`);
+            // if (this.cookiesImprovement) fetch(`/word_ok/${guess}`);
             this.completeGame();
+            history$1.save(board);
+            allHistory = history$1.loadAll();
         }
         else {
             this.shake();
-            // showMessage('Нема довољно слова')
+            this.showMessage('Нема довољно слова');
         }
-        history$1.save(board);
     }
     completeGame() {
         // Reset state
@@ -22654,15 +22740,8 @@ class RechkoApp extends IoElement {
             if (row.every((tile) => tile.state === "correct" /* CORRECT */)) {
                 // game win
                 this.allowInput = false;
-                // const lastWord = row[0].letter + row[1].letter + row[2].letter + row[3].letter + row[4].letter;
                 setTimeout(() => {
-                    // grid = genResultGrid()
-                    // showResult(
-                    //   ['Генијално!', 'Величанствено!', 'Импресивно!', 'Одлично!', 'Браво!', 'Није лоше!'][
-                    //     this.currentRowIndex
-                    //   ],
-                    //   -1
-                    // );l
+                    this.showStats = true;
                 }, 1600);
                 return;
             }
@@ -22670,8 +22749,9 @@ class RechkoApp extends IoElement {
                 if (this.currentRowIndex === 6) {
                     // game over
                     this.allowInput = false;
-                    // const lastWord = row[0].letter + row[1].letter + row[2].letter + row[3].letter + row[4].letter;
-                    // showResult(answer.toUpperCase(), -1);
+                    setTimeout(() => {
+                        this.showStats = true;
+                    }, 1600);
                     return;
                 }
                 else {
@@ -22710,27 +22790,14 @@ class RechkoApp extends IoElement {
     onHideSettings() {
         this.showSettings = false;
     }
-    showMessage(msg, time = 250) {
+    onMessage(event) {
+        this.showMessage(event.detail.message);
+    }
+    showMessage(msg, time = 1000) {
         this.message = msg;
         if (time > 0) {
             setTimeout(() => {
                 this.message = '';
-            }, time);
-        }
-    }
-    share() {
-        var dateObj = new Date();
-        var month = dateObj.getUTCMonth() + 1;
-        var day = dateObj.getUTCDate();
-        var year = dateObj.getUTCFullYear();
-        navigator.clipboard.writeText(`@rechko_igra\n${day}/${month}/${year}\n${this.grid}`);
-        this.showMessage('Резултат копиран', 2000);
-    }
-    showResult(msg, time = 250) {
-        this.result = msg;
-        if (time > 0) {
-            setTimeout(() => {
-                this.result = '';
             }, time);
         }
     }
@@ -22754,7 +22821,6 @@ class RechkoApp extends IoElement {
     currentRowIndexChanged() {
         this.currentRow = this.board[this.currentRowIndex];
     }
-    currentRowChanged() { }
     changed() {
         const modalOpen = this.showGDPR || this.showHelp || this.showStats || this.showSettings;
         this.template([
@@ -22780,6 +22846,9 @@ class RechkoApp extends IoElement {
             this.showHelp ? ['rechko-help', { 'on-close': this.onHideHelp }] : null,
             this.showStats ? ['rechko-stats', {
                     'on-close': this.onHideStats,
+                    'on-message': this.onMessage,
+                    answer: answer,
+                    board: this.board,
                     history: allHistory
                 }] : null,
             this.showSettings ? ['rechko-settings', {
@@ -22788,6 +22857,7 @@ class RechkoApp extends IoElement {
                     darkTheme: this.bind('darkTheme'),
                     colorblindMode: this.bind('colorblindMode'),
                 }] : null,
+            this.message ? ['div', { class: 'message' }, this.message] : null
         ]);
     }
 }

@@ -1,70 +1,76 @@
-import {IoElement, RegisterIoElement} from '@iogui/iogui';
+import {RegisterIoElement, PropertiesDeclaration} from '@iogui/iogui';
+import {RechkoPopup} from './popup';
 
-export class RechkoGdpr extends IoElement {
+export class RechkoGdpr extends RechkoPopup {
   static get Style() {
     return /* css */`
-      :host {
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        background: var(--io-background-color);
-        padding: 2em;
-        top: 3.4em;
-        bottom: 0;
-        left: 0;
-        right: 0;
-      }
-      :host h3 {
-        font-size: 1.4rem;
-      }
-      :host p {
-        font-size: 1.1rem;
-        line-height: 1.2em;
-        margin: 0.5em 0;
-      }
       :host p:last-of-type {
-        flex: 1;
+        margin-bottom: 2em;
+      }
+      :host .buttons {
+        display: flex;
+        margin: 2em 0;
       }
       :host io-button {
         --io-spacing: 1em;
         --io-item-height: 3.5em;
-        width: 10em;
-        margin: 1em 0.25em;
-        padding-left: 0;
-        padding-right: 0;
+        flex: 1;  
         font-weight: bold;
-        color: var(--io-color-light);
-        background: rgb(30, 185, 50);
+        color: #ffffff;
+        background: #6aaa64;
+        border: none;
+        border-radius: 4px;
       }
       :host io-button:first-of-type {
-        background: rgb(225, 90, 60);
+        background: #ee5a34;
+        margin-right: 1em;
       }
-      :host .switchbox {
+      :host io-switch {
+        --io-line-height: 30px;
+        --io-item-height: 40px;
+      }
+      :host .option:first-of-type {
+        border-top: 1px solid var(--io-color-border);
+      }
+      :host .option {
+        display: flex;
         text-align: left;
         white-space: nowrap;
-        margin: 2em;
+        font-size: 1.3em;
+        line-height: 3em;
+        border-bottom: 1px solid var(--io-color-border);
+      }
+      :host .option > span {
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      :host .option > io-switch {
+        margin-top: 1em;
+        flex-shrink: 0;
       }
       @media (max-width: 500px) {
-        :host h3 {
-          font-size: 1.2rem;
-          margin: 0.5em 0;
-        }
         :host p {
-          font-size: 0.9rem;
           margin: 0.5em 0;
         }
         :host io-button {
-          margin: 0.25em;
+          font-size: 0.7em;
+          line-height: 1.4em;
         }
       }
-      @media (max-width: 450px) {
-        :host .switchbox {
-          margin: 2em 0em;
+      @media (max-width: 360px) {
+        :host io-button {
+          font-size: 0.6em;
+          line-height: 1.6em;
+        }
+        :host .option span {
+          font-size: 0.7em;
+          line-height: 4em;
         }
       }
     `;
   }
-  static get Properties() {
+  static get Properties(): PropertiesDeclaration {
     return {
       cookiesRequired: true,
       cookiesImprovement: true,
@@ -97,24 +103,21 @@ export class RechkoGdpr extends IoElement {
   changed() {
     this.template([
       ['h3', 'Ова веб страница користи колачиће'],
-      ['p', 'Користимо колачиће како би побољшали Речка.'],
-      ['p', 'Сакупљамо речи које корисници открију да не постоје у постојећој бази.'],
-      ['p', 'Страница такође користи и Google Analytics услуге. Сви подаци се користе искључиво у статистичке сврхе, за побољшање искуства играња и не деле се ни са једном компанијом, друштвом или неком трећом групом.'],
-      ['div', {class: 'switchbox'}, [
-        ['div', [
-          ['io-switch', {value: this.bind('cookiesRequired'), disabled: true}],
-          ['io-item', 'Hеопходни колачићи']
-        ]],
-        ['div', [
-          ['io-switch', {value: this.bind('cookiesImprovement')}],
-          ['io-item', 'Cакупљање унетих речи']
-        ]],
-        ['div', [
-          ['io-switch', {value: this.bind('cookiesAnalitics')}],
-          ['io-item', 'Аналитички колачићи']
-        ]],
+      ['p', 'Користимо колачиће како би побољшали Речка. Сакупљамо речи које корисници открију да не постоје у постојећој бази.'],
+      ['p', 'Страница користи и Google Analytics услуге. Сви подаци се користе искључиво у статистичке сврхе, за побољшање искуства играња и не деле се ни са једном компанијом, друштвом или неком трећом групом.'],
+      ['div', {class: 'option'}, [
+        ['span', 'Hеопходни колачићи'],
+        ['io-switch', {value: this.bind('cookiesRequired'), disabled: true}],
       ]],
-      ['div', [
+      ['div', {class: 'option'}, [
+        ['span', 'Cакупљање речи'],
+        ['io-switch', {value: this.bind('cookiesImprovement')}],
+      ]],
+      ['div', {class: 'option'}, [
+        ['span', 'Аналитички колачићи'],
+        ['io-switch', {value: this.bind('cookiesAnalitics')}],
+      ]],
+      ['div', {class: 'buttons'}, [
         ['io-button', {label: 'НЕ ПРИХВАТАМ', action: this.onDecline}],
         ['io-button', {label: 'ПРИХВАТАМ', id: 'accept', action: this.onAccept}],
       ]]

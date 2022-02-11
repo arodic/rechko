@@ -13,7 +13,7 @@ export class RechkoKeyboard extends IoElement {
       :host {
         display: flex;
         flex-direction: column;
-        margin: 30px 6px 8px 6px;
+        margin: 2.427em 1em 1.5em 1em;
         user-select: none;
       }
       :host > div {

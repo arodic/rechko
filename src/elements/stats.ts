@@ -1,37 +1,34 @@
-import {IoElement, RegisterIoElement} from '@iogui/iogui';
-import { transpile } from 'typescript';
-import { LetterState } from '../types'
+import {RegisterIoElement} from '@iogui/iogui';
+import {LetterState} from '../types'
+import {RechkoPopup} from './popup';
 
-export class RechkoStats extends IoElement {
+const ICONS = {
+  [LetterState.CORRECT]: '🟩',
+  [LetterState.PRESENT]: '🟨',
+  [LetterState.ABSENT]: '⬜',
+  [LetterState.INITIAL]: null
+}
+
+export class RechkoStats extends RechkoPopup {
   static get Style() {
     return /* css */`
-      :host {
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        background: var(--io-background-color);
-        padding: 2em;
-        top: 3.4em;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        overflow: auto;
-      }
-      :host h3 {
-        margin: 1em 0;
-        font-size: 1.4rem;
-      }
       :host h4 {
         margin: 1em 0;
         font-size: 1.2rem;
       }
+      :host .board {
+        white-space: pre;
+        line-height: 1.2em;
+      }
       :host .grid {
+        margin: 0 auto;
+        width: 19em;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(2, 1fr);
       }
       :host .grid .count {
-        font-size: 3rem;
+        font-size: 2rem;
       }
       :host .distribution > div {
         display: flex;
@@ -46,24 +43,47 @@ export class RechkoStats extends IoElement {
         margin-left: 0.5em;
         text-align: right;
       }
-      :host io-icon {
-        position: absolute;
-        top: 1em;
-        right: 1em;
+      :host > button {
+        margin: 1em auto;
+        width: 8em;
+        border: none;
+        border-radius: 3px;
+        font-size: 1.2em;
+        background: #6aaa64;
+        font-weight: bold;
+        color: #ffffff;
+        cursor: pointer;
+      }
+      :host > button svg {
+        fill: #ffffff;
+
+      }
+      :host > button > span {
+        line-height: 2.4em;
+      }
+      :host > button > io-icon {
+        margin-left: 0.5em;
+        margin-bottom: -0.5em;
       }
     `;
   }
   static get Properties() {
     return {
+      message: '',
+      answer: '',
+      win: false,
+      boardGrid: '',
+      shareText: '',
+      board: {
+        value: [],
+        observe: true
+      },
       history: Object,
       gamesStarted: 0,
       gamesFinished: 0,
       gamesWon: 0,
       gameStats: [0, 0, 0, 0, 0, 0]
     }
-  }
-  onClose() {
-    this.dispatchEvent('close');
   }
   historyChanged() {
     let gamesStarted = 0;
@@ -94,12 +114,60 @@ export class RechkoStats extends IoElement {
       gameStats: gameStats,
     })
   }
+  async onShare() {
+    try {
+      await navigator.share({
+        text: this.shareText
+      });
+    } catch(err) {
+      navigator.clipboard.writeText(this.shareText);
+      this.dispatchEvent('message', {message: 'Резултат копиран'});
+    }
+
+  }
+  boardChanged() {
+    this.boardMutated();
+  }
+  boardMutated() {
+    const dateObj = new Date();
+    const month = dateObj.getUTCMonth() + 1;
+    const day = dateObj.getUTCDate();
+    const year = dateObj.getUTCFullYear();
+
+    let lastIndex = -1;
+    this.win = false;
+    let finish = false;
+    this.board.forEach((row: any, i: number) => {
+      if (row.every((tile: any) => tile.state !== LetterState.INITIAL)) {
+        lastIndex++;
+      }
+      if (row.every((tile: any) => tile.state === LetterState.CORRECT)) {
+        this.win = true;
+      }
+    });
+    if (this.board[5].every((tile: any) => (tile.state !== LetterState.CORRECT && tile.state !== LetterState.INITIAL))) {
+      finish = true;
+    }
+
+    this.message = this.win ? ['Генијално!', 'Величанствено!', 'Импресивно!', 'Одлично!', 'Браво!', 'Није лоше!'][lastIndex] : finish ? this.answer : '';
+
+
+    this.boardGrid = this.board
+      .slice(0, lastIndex + 1)
+      .map((row: any) => {
+        return row.map((tile: any) => (ICONS as any)[tile.state]).join('')
+      })
+      .join('\n');
+    this.shareText = `@rechko_igra\n${day}/${month}/${year}\n${this.boardGrid}`;
+  }
   changed() {
     const maxGuess = this.gameStats.reduce(function(a: number, b: number) {
       return Math.max(a, b);
     }, -Infinity);
 
     this.template([
+      ['h2', {class: 'answer'}, this.message],
+      ['div', {class: 'board'}, this.boardGrid],
       ['h3', 'Статистика'],
       ['div', {class: 'grid'}, [
         ['span', {class: 'count'}, String(this.gamesStarted)],
@@ -111,26 +179,18 @@ export class RechkoStats extends IoElement {
       ]],
       ['h4', 'Дистрибуција погодака:'],
       ['div', {class: 'distribution'}, [
-        ['div', [
-          ['span', '1'], ['span', {style: {flex: this.gameStats[0] / maxGuess}}, String(this.gameStats[0])]
-        ]],
-        ['div', [
-          ['span', '2'], ['span', {style: {flex: this.gameStats[1] / maxGuess}}, String(this.gameStats[1])]
-        ]],
-        ['div', [
-          ['span', '3'], ['span', {style: {flex: this.gameStats[2] / maxGuess}}, String(this.gameStats[2])]
-        ]],
-        ['div', [
-          ['span', '4'], ['span', {style: {flex: this.gameStats[3] / maxGuess}}, String(this.gameStats[3])]
-        ]],
-        ['div', [
-          ['span', '5'], ['span', {style: {flex: this.gameStats[4] / maxGuess}}, String(this.gameStats[4])]
-        ]],
-        ['div', [
-          ['span', '6'], ['span', {style: {flex: this.gameStats[5] / maxGuess}}, String(this.gameStats[5])]
-        ]],
+        ['div', [['span', '1'], ['span', {style: {flex: this.gameStats[0] / maxGuess}}, String(this.gameStats[0])]]],
+        ['div', [['span', '2'], ['span', {style: {flex: this.gameStats[1] / maxGuess}}, String(this.gameStats[1])]]],
+        ['div', [['span', '3'], ['span', {style: {flex: this.gameStats[2] / maxGuess}}, String(this.gameStats[2])]]],
+        ['div', [['span', '4'], ['span', {style: {flex: this.gameStats[3] / maxGuess}}, String(this.gameStats[3])]]],
+        ['div', [['span', '5'], ['span', {style: {flex: this.gameStats[4] / maxGuess}}, String(this.gameStats[4])]]],
+        ['div', [['span', '6'], ['span', {style: {flex: this.gameStats[5] / maxGuess}}, String(this.gameStats[5])]]],
       ]],
       ['io-icon', {icon: 'icons:close', 'on-click': this.onClose}],
+      this.win ? ['button', {'on-click': this.onShare}, [
+        ['span', 'Подели'],
+        ['io-icon', {icon: 'buttons:share'}]
+      ]] : null,
     ]);
   }
 }
