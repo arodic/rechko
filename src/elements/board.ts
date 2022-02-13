@@ -11,6 +11,7 @@ export class RechkoBoard extends IoElement {
       :host .correct,
       :host .present,
       :host .absent {
+        color: white;
       }
       :host .correct {
         background-color: #6aaa64 !important;
