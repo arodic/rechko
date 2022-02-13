@@ -32394,7 +32394,6 @@ class RechkoBoard extends IoElement {
       :host .correct,
       :host .present,
       :host .absent {
-        color: white !important;
       }
       :host .correct {
         background-color: #6aaa64 !important;
@@ -32443,9 +32442,6 @@ class RechkoBoard extends IoElement {
       }
       :host .tile .front {
         border: 1px solid var(--io-color-border);
-      }
-      :host .tile.filled .front {
-        background: var(--io-background-color-light);
       }
       :host .tile .back {
         transform: rotateX(180deg);
