@@ -32972,9 +32972,15 @@ class RechkoStats extends RechkoPopup {
       :host .distribution > div > * {
         padding: 0.25em 0.5em;
       }
+      :host .distribution > div > :nth-child(1) {
+        width: 1.2em;
+      }
+      :host .distribution > div:last-of-type > :nth-child(2) {
+        background: #ee5a34 !important;
+      }
       :host .distribution > div > :nth-child(2) {
         flex: 1;
-        background: var(--io-color-gradient-end);
+        background: #6aaa64 !important;
         margin-left: 0.5em;
         text-align: right;
       }
@@ -33007,6 +33013,7 @@ class RechkoStats extends RechkoPopup {
             message: '',
             answer: '',
             win: false,
+            finish: false,
             boardGrid: '',
             shareText: '',
             board: {
@@ -33017,14 +33024,14 @@ class RechkoStats extends RechkoPopup {
             gamesStarted: 0,
             gamesFinished: 0,
             gamesWon: 0,
-            gameStats: [0, 0, 0, 0, 0, 0]
+            gameStats: [0, 0, 0, 0, 0, 0, 0]
         };
     }
     historyChanged() {
         let gamesStarted = 0;
         let gamesFinished = 0;
         let gamesWon = 0;
-        let gameStats = [0, 0, 0, 0, 0, 0];
+        let gameStats = [0, 0, 0, 0, 0, 0, 0];
         for (const day in this.history) {
             const game = this.history[day];
             if (game[0].every((tile) => tile.state !== 0 /* INITIAL */)) {
@@ -33040,6 +33047,7 @@ class RechkoStats extends RechkoPopup {
             });
             if (game[5].every((tile) => (tile.state !== "correct" /* CORRECT */ && tile.state !== 0 /* INITIAL */))) {
                 gamesFinished++;
+                gameStats[6]++;
             }
         }
         this.setProperties({
@@ -33070,7 +33078,7 @@ class RechkoStats extends RechkoPopup {
         const year = dateObj.getUTCFullYear();
         let lastIndex = -1;
         this.win = false;
-        let finish = false;
+        this.finish = false;
         this.board.forEach((row, i) => {
             if (row.every((tile) => tile.state !== 0 /* INITIAL */)) {
                 lastIndex++;
@@ -33079,10 +33087,10 @@ class RechkoStats extends RechkoPopup {
                 this.win = true;
             }
         });
-        if (this.board[5].every((tile) => (tile.state !== "correct" /* CORRECT */ && tile.state !== 0 /* INITIAL */))) {
-            finish = true;
+        if (this.board[5].every((tile) => (tile.state !== 0 /* INITIAL */))) {
+            this.finish = true;
         }
-        this.message = this.win ? ['Генијално!', 'Величанствено!', 'Импресивно!', 'Одлично!', 'Браво!', 'Није лоше!'][lastIndex] : finish ? this.answer : '';
+        this.message = this.win ? ['Генијално!', 'Величанствено!', 'Импресивно!', 'Одлично!', 'Браво!', 'Није лоше!'][lastIndex] : this.finish ? this.answer : '';
         this.boardGrid = this.board
             .slice(0, lastIndex + 1)
             .map((row) => {
@@ -33115,9 +33123,10 @@ class RechkoStats extends RechkoPopup {
                     ['div', [['span', '4'], ['span', { style: { flex: this.gameStats[3] / maxGuess } }, String(this.gameStats[3])]]],
                     ['div', [['span', '5'], ['span', { style: { flex: this.gameStats[4] / maxGuess } }, String(this.gameStats[4])]]],
                     ['div', [['span', '6'], ['span', { style: { flex: this.gameStats[5] / maxGuess } }, String(this.gameStats[5])]]],
+                    ['div', [['span', 'x'], ['span', { style: { flex: this.gameStats[6] / maxGuess } }, String(this.gameStats[6])]]],
                 ]],
             ['io-icon', { icon: 'icons:close', 'on-click': this.onClose }],
-            this.win ? ['button', { 'on-click': this.onShare }, [
+            (this.win || this.finish) ? ['button', { 'on-click': this.onShare }, [
                     ['span', 'Подели'],
                     ['io-icon', { icon: 'buttons:share' }]
                 ]] : null,
@@ -33446,7 +33455,7 @@ class RechkoApp extends IoElement {
                 return;
             }
             if (row.every((tile) => tile.state !== 0 /* INITIAL */)) {
-                if (this.currentRowIndex === 6) {
+                if (this.currentRowIndex === 5) {
                     // game over
                     this.allowInput = false;
                     setTimeout(() => {

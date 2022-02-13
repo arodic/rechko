@@ -264,7 +264,7 @@ export class RechkoApp extends IoElement {
         return;
       }
       if (row.every((tile: any) => tile.state !== LetterState.INITIAL)) {
-        if (this.currentRowIndex === 6) {
+        if (this.currentRowIndex === 5) {
           // game over
           this.allowInput = false;
           setTimeout(() => {
