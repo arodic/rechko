@@ -1,5 +1,5 @@
 import {IoElement, RegisterIoElement} from '@iogui/iogui';
-export { RechkoKey } from './key.js';
+import './key.js';
 
 const rows = [
   'љњертзуиопш'.split(''),
@@ -13,14 +13,19 @@ export class RechkoKeyboard extends IoElement {
       :host {
         display: flex;
         flex-direction: column;
-        margin: 2.427em 1em 1.5em 1em;
+        margin: 1em 1em 1em 1em;
         user-select: none;
       }
       :host > div {
         display: flex;
         width: 100%;
-        margin: 0 auto 8px;
+        margin: 0 auto 3px;
         touch-action: manipulation;
+      }
+      @media (max-width: 360px) {
+        :host {
+          margin: 0.25em 0.25em 0.25em 0.25em;
+        }
       }
     `;
   }

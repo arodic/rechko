@@ -4,20 +4,14 @@ export class RechkoBoard extends IoElement {
   static get Style() {
     return /* css */`
       :host {
-        display: grid;
-        grid-template-rows: repeat(6, 1fr);
-        grid-gap: 5px;
+        overflow: hidden;
         padding: 5px;
         box-sizing: border-box;
-        --height: min(420px, calc(var(--vh, 100vh) - 310px));
-        /* height: var(--height); */
-        width: min(350px, calc(var(--height) / 6 * 5));
-        margin: 0px auto;
       }
       :host .correct,
       :host .present,
       :host .absent {
-        color: var(--io-color) !important;
+        color: white !important;
       }
       :host .correct {
         background-color: #6aaa64 !important;
@@ -26,17 +20,19 @@ export class RechkoBoard extends IoElement {
         background-color: #c9b458 !important;
       }
       :host .absent {
-        background-color: var(--io-background-color-dark) !important;
+        background-color: var(--io-background-color-light) !important;
       }
       :host .row {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        grid-gap: 5px;
+        display: flex;
+        width: calc(var(--tile-size) * 5);
+        height: var(--tile-size);
+        margin: 0 auto;
       }
       :host .tile {
-        height: min(65px, calc(calc(var(--height) / 6)) - 5px);
-        width: 100%;
-        font-size: 2rem;
+        height: calc(var(--tile-size) - 6px);
+        width: calc(var(--tile-size) - 6px);
+        margin-right: 5px;
+        font-size: 3rem;
         line-height: 2rem;
         font-weight: bold;
         vertical-align: middle;
@@ -123,9 +119,19 @@ export class RechkoBoard extends IoElement {
           transform: translate(1px);
         }
       }
-      @media (max-height: 680px) {
+      @media (max-width: 400px) {
+        :host {
+          padding: 1px;
+        }
+        :host .row {
+          width: calc(var(--tile-size) * 5);
+          height: var(--tile-size);
+        }
         :host .tile {
-          font-size: 3vh;
+          font-size: 2rem;
+          margin-right: 1px;
+          height: calc(var(--tile-size) - 2px);
+          width: calc(var(--tile-size) - 1.2px);
         }
       }
     `;
@@ -142,6 +148,11 @@ export class RechkoBoard extends IoElement {
         reflect: 1
       }
     }
+  }
+  onResized() {
+    const rect = this.getBoundingClientRect();
+    const size = Math.min(rect.width, rect.height*5/6) / 5;
+    this.style.setProperty('--tile-size', size + 'px');
   }
   changed() {
     this.template(this.board.map((row: any, i: number) => {

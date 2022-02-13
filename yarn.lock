@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@iogui/iogui@https://github.com/io-gui/iogui.git#v0.0.1-rc7":
+"@iogui/iogui@https://github.com/io-gui/iogui.git#v0.0.1-rc8":
   version "0.0.1-rc7"
-  resolved "https://github.com/io-gui/iogui.git#03b9e09b6051499921e74ebb72d6a68e637ed178"
+  resolved "https://github.com/io-gui/iogui.git#6aa8f49297c0ef9b08cc6c31579f8e5bb11de9d9"
 
 "@rollup/plugin-node-resolve@^13.1.3":
   version "13.1.3"

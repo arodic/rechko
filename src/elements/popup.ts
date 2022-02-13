@@ -17,6 +17,7 @@ export class RechkoPopup extends IoElement {
         will-change: transform;
         transform: translate3d(0, 200px, 0);
         transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+        overflow: auto;
       }
       :host[show] {
         opacity: 1;

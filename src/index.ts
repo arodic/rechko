@@ -3,28 +3,15 @@ import { getWordOfTheDay, allWords } from './words'
 import { LetterState } from './types'
 import { history } from './history'
 
-// TODO: iogui - this should not be necessary
 import { IoThemeSingleton } from '@iogui/iogui';
-export { IoString } from '@iogui/iogui';
-export { IoIcon } from '@iogui/iogui';
-export { IoButton } from '@iogui/iogui';
-export { IoSwitch } from '@iogui/iogui';
-export { IoItem } from '@iogui/iogui';
 
-export { RechkoBoard } from './elements/board.js';
-export { RechkoKeyboard } from './elements/keyboard.js';
-export { RechkoGdpr } from './elements/gdpr.js';
-export { RechkoHelp } from './elements/help.js';
-export { RechkoStats } from './elements/stats.js';
-export { RechkoSettings } from './elements/settings.js';
+import './elements/board.js';
+import './elements/keyboard.js';
+import './elements/gdpr.js';
+import './elements/help.js';
+import './elements/stats.js';
+import './elements/settings.js';
 import './elements/icons.js';
-
-window.addEventListener('resize', onResize)
-onResize()
-
-function onResize() {
-  document.body.style.setProperty('--vh', window.innerHeight + 'px')
-}
 
 IoThemeSingleton.theme = JSON.parse(localStorage.getItem('darkTheme') || 'false') ? 'dark' : 'light';
 
@@ -63,8 +50,8 @@ export class RechkoApp extends IoElement {
         overflow: hidden;
       }
       :host > header {
+        flex: 0 0 auto;
         border-bottom: 1px solid var(--io-color-border);
-        margin-bottom: 30px;
         position: relative;
       }
       :host > header > h1 {
@@ -84,9 +71,6 @@ export class RechkoApp extends IoElement {
         left: auto;
         right: 4em;
       }
-      :host > .spacer {
-        flex: 1;
-      }
       :host > .message {
         position: absolute;
         left: 50%;
@@ -100,6 +84,9 @@ export class RechkoApp extends IoElement {
         transition: opacity 0.3s ease-out;
         font-weight: 600;
       }
+      :host > rechko-board {
+        flex: 1 1 auto;
+      }
       :host[colorblindmode] rechko-board .correct {
         background-color: #f5793a !important;
       }
@@ -111,6 +98,13 @@ export class RechkoApp extends IoElement {
       }
       :host[colorblindmode] rechko-key[state=present] button {
         background-color: #85c0f9 !important;
+      }
+      @media (max-width: 310px) {
+        :host > header > h1 {
+          font-size: 18px;
+          line-height: 42px;
+          margin-left: -32px;
+        }
       }
     `;
   }
@@ -207,10 +201,10 @@ export class RechkoApp extends IoElement {
       if (!allWords.includes(guess) && guess !== answer) {
         this.shake();
         this.showMessage(`Реч није на листи`);
-        // if (this.cookiesImprovement) fetch(`/word_nok/${guess}`);
+        if (this.cookiesImprovement) fetch(`/word_nok/${guess}`);
         return;
       }
-      // if (this.cookiesImprovement) fetch(`/word_ok/${guess}`);
+      if (this.cookiesImprovement) fetch(`/word_ok/${guess}`);
       this.completeGame();
       history.save(board);
       allHistory = history.loadAll();
@@ -351,7 +345,6 @@ export class RechkoApp extends IoElement {
         !modalOpen ? ['io-icon', {class:'settingsIcon', icon: 'buttons:settings', 'on-click': this.onShowSetttings}] : null,
       ]],
       ['rechko-board', {class: 'notranslate', board: this.board, shakeRowIndex: this.shakeRowIndex}],
-      ['div', {class: 'spacer'}],
       ['rechko-keyboard', {
         class: 'notranslate',
         letterStates: this.letterStates,

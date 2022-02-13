@@ -13,13 +13,21 @@ export class RechkoHelp extends RechkoPopup {
       :host p:last-of-type {
         font-weight: bold;
         border-top: 1px solid #ccc;
-        margin-top: 1.5em;
+        margin-top: 2.5em;
+        margin-bottom: 2.5em;
         padding-top: 1.5em;
       }
       :host rechko-board {
-        grid-template-rows: repeat(1, 1fr);
+        flex: 1 0 auto;
+        --tile-size: 64px !important;
         margin-top: 1em;
-        --height: min(340px, calc(var(--vh, 100vh) - 310px));
+      }
+      @media (max-width: 400px) {
+        :host rechko-board {
+          --tile-size: 42px !important;
+          margin-top: 1em;
+          height: 42px;
+        }
       }
     `;
   }

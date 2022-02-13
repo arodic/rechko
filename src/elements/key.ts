@@ -4,9 +4,9 @@ export class RechkoKey extends IoElement {
   static get Style() {
     return /* css */`
       :host {
-        margin: 0 6px 0 0;
+        margin: 0 3px 0 0;
         display: flex;
-        flex: 1;
+        flex: 1 0 auto;
       }
       :host button {
         font-family: inherit;
@@ -14,25 +14,25 @@ export class RechkoKey extends IoElement {
         border: 0;
         height: 58px;
         border-radius: 4px;
+        margin: 0;
+        padding: 0;
         cursor: pointer;
         user-select: none;
-        background-color: var(--io-background-color);
-        color: var(--io-color-light);
-        border: 1px solid var(--io-color-border);
+        background-color: var(--io-background-color-dark);
+        color: var(--io-color);
         flex: 1;
         display: flex;
         justify-content: center;
         align-items: center;
         text-transform: uppercase;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
-        /* transition: all .2s 1.5s; */
       }
       :host io-icon {
         margin: auto;
-        fill: #444;
+        fill: var(--io-color);
       }
       :host[big] {
-        flex: 1.5;
+        flex: 3;
       }
       :host:last-of-type {
         margin: 0;
@@ -40,7 +40,7 @@ export class RechkoKey extends IoElement {
       :host[state=correct] button,
       :host[state=present] button,
       :host[state=absent] button {
-        color: var(--io-color-light) !important;
+        color: white !important;
       }
       :host[state=correct] button {
         background-color: #6aaa64 !important;
@@ -49,7 +49,7 @@ export class RechkoKey extends IoElement {
         background-color: #c9b458 !important;
       }
       :host[state=absent] button {
-        background-color: var(--io-background-color-dark) !important;
+        background-color: var(--io-background-color-light) !important;
       }
     `;
   }
