@@ -33097,7 +33097,7 @@ class RechkoStats extends RechkoPopup {
             return row.map((tile) => ICONS[tile.state]).join('');
         })
             .join('\n');
-        this.shareText = `@rechko_igra\n${day}/${month}/${year}\n${this.boardGrid}`;
+        this.shareText = `rechko.com\n${day}/${month}/${year}\n${this.boardGrid}`;
     }
     changed() {
         const maxGuess = this.gameStats.reduce(function (a, b) {
