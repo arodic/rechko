@@ -31,6 +31,15 @@
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      const consent = JSON.parse(localStorage.getItem('cookiesAnalitics') || 'false');
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'analytics_storage': consent ? 'granted' : 'denied'
+      });
+      if (!consent) {
+        document.cookie = '_ga_56M87VZHKQ=; Path=/; Domain=.rechko.com; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        document.cookie = '_ga=; Path=/; Domain=.rechko.com; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      }
       gtag('js', new Date());
       gtag('config', 'G-56M87VZHKQ');
     </script>

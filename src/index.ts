@@ -206,8 +206,10 @@ export class RechkoApp extends IoElement {
       }
       if (this.cookiesImprovement) fetch(`/word_ok/${guess}`);
       this.completeGame();
-      history.save(board);
-      allHistory = history.loadAll();
+      if (this.cookiesRequired) {
+        history.save(board);
+        allHistory = history.loadAll();
+      }
     } else {
       this.shake();
       this.showMessage('Нема довољно слова')
@@ -279,14 +281,25 @@ export class RechkoApp extends IoElement {
     });
     this.emitUpdate();
   }
+  onShowGDPR() {
+    this.showGDPR = true;
+  }
   onHideGDPR() {
-    if (!this.cookiesRequired && !this.cookiesImprovement && !this.cookiesAnalitics) {
+    if (!this.cookiesRequired) {
       localStorage.clear();
     }
     localStorage.setItem('cookiesRequired', String(this.cookiesRequired));
     localStorage.setItem('cookiesImprovement', String(this.cookiesImprovement));
     localStorage.setItem('cookiesAnalitics', String(this.cookiesAnalitics));
     localStorage.setItem('show-gdpr', 'false');
+    try {
+      gtag('consent', 'update', {
+        'analytics_storage': this.cookiesAnalitics ? 'granted' : 'denied',
+        'ad_storage': this.cookiesAnalitics ? 'granted' : 'denied'
+      });
+    } catch(error) {
+      console.warn(error);
+    }
     this.showGDPR = false;
   }
   onShowHelp() {
@@ -366,6 +379,7 @@ export class RechkoApp extends IoElement {
       }] : null,
       this.showSettings ? ['rechko-settings', {
         'on-close': this.onHideSettings,
+        'on-show-gdpr': this.onShowGDPR,
         hardMode: this.bind('hardMode'),
         darkTheme: this.bind('darkTheme'),
         colorblindMode: this.bind('colorblindMode'),

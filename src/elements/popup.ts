@@ -56,7 +56,7 @@ export class RechkoPopup extends IoElement {
     this.show = false;
     setTimeout(()=>{
       this.dispatchEvent('close');
-    }, 250)
+    }, 250);
   }
 
   changed() {

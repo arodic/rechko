@@ -14116,36 +14116,33 @@ const answers = [
     'хељда',
     'фешта',
     'жудња',
+    'облак',
+    'пршут',
+    'књига',
+    'палма',
     'кусур',
+    'снови',
+    'радар',
     'тиква',
     'анода',
-    'пршут',
-    'палма',
-    'крмак',
     'ћошак',
     'олово',
-    'босна',
     'смиље',
-    'радар',
     'авала',
-    'књига',
-    'снови',
     'бордо',
-    'дрека',
     'понор',
     'санке',
     'чочек',
     'грива',
     'жабац',
     'оквир',
-    'гумно',
     'икона',
-    'ћупић',
     'квака',
     'труло',
     'свећа',
     'блато',
     'перон',
+    'дрека',
     'калај',
     'јакна',
     'жбуње',
@@ -14159,16 +14156,12 @@ const answers = [
     'ковач',
     'дебло',
     'шерпа',
-    'хрват',
     'дубак',
     'чичак',
     'пацов',
     'стриц',
-    'вивак',
     'вијак',
-    'тетак',
     'лепак',
-    'сељак',
     'клека',
     'чизма',
     'купус',
@@ -32748,6 +32741,9 @@ RegisterIoElement(RechkoPopup);
 class RechkoGdpr extends RechkoPopup {
     static get Style() {
         return /* css */ `
+      :host {
+        z-index: 100;
+      }
       :host p:last-of-type {
         margin-bottom: 2em;
       }
@@ -32823,6 +32819,7 @@ class RechkoGdpr extends RechkoPopup {
     }
     connectedCallback() {
         super.connectedCallback();
+        this.cookiesRequired = true;
         this.$.accept?.focus();
     }
     onDecline() {
@@ -32841,7 +32838,7 @@ class RechkoGdpr extends RechkoPopup {
     }
     onAccept() {
         setTimeout(() => {
-            this.dispatchEvent('close');
+            this.onClose();
         }, 500);
     }
     changed() {
@@ -33162,6 +33159,17 @@ class RechkoSettings extends RechkoPopup {
         margin-top: 1em;
         flex-shrink: 0;
       }
+      :host .option > io-button {
+        --io-spacing: 1em;
+        --io-item-height: 3.5em;
+        flex: 1;  
+        font-weight: bold;
+        color: #ffffff;
+        background: var(--io-background-color-light);
+        border: none;
+        margin-top: 0.5em;
+        border-radius: 4px;
+      }
     `;
     }
     static get Properties() {
@@ -33171,6 +33179,10 @@ class RechkoSettings extends RechkoPopup {
             colorblindMode: false,
             cookiesRequired: true,
         };
+    }
+    onShowGDPR() {
+        this.dispatchEvent('show-gdpr');
+        this.onClose();
     }
     changed() {
         this.template([
@@ -33183,7 +33195,11 @@ class RechkoSettings extends RechkoPopup {
             ['div', { class: 'option' }, [
                     ['span', 'Боје високог контраста'],
                     ['io-switch', { value: this.bind('colorblindMode') }],
-                ]]
+                ]],
+            ['div', { class: 'option' }, [
+                    ['span', 'Подешавање колачића'],
+                    ['io-button', { label: 'ОТВОРИ', action: this.onShowGDPR }],
+                ]],
         ]);
     }
 }
@@ -33398,8 +33414,10 @@ class RechkoApp extends IoElement {
             if (this.cookiesImprovement)
                 fetch(`/word_ok/${guess}`);
             this.completeGame();
-            history$1.save(board);
-            allHistory = history$1.loadAll();
+            if (this.cookiesRequired) {
+                history$1.save(board);
+                allHistory = history$1.loadAll();
+            }
         }
         else {
             this.shake();
@@ -33471,14 +33489,26 @@ class RechkoApp extends IoElement {
         });
         this.emitUpdate();
     }
+    onShowGDPR() {
+        this.showGDPR = true;
+    }
     onHideGDPR() {
-        if (!this.cookiesRequired && !this.cookiesImprovement && !this.cookiesAnalitics) {
+        if (!this.cookiesRequired) {
             localStorage.clear();
         }
         localStorage.setItem('cookiesRequired', String(this.cookiesRequired));
         localStorage.setItem('cookiesImprovement', String(this.cookiesImprovement));
         localStorage.setItem('cookiesAnalitics', String(this.cookiesAnalitics));
         localStorage.setItem('show-gdpr', 'false');
+        try {
+            gtag('consent', 'update', {
+                'analytics_storage': this.cookiesAnalitics ? 'granted' : 'denied',
+                'ad_storage': this.cookiesAnalitics ? 'granted' : 'denied'
+            });
+        }
+        catch (error) {
+            console.warn(error);
+        }
         this.showGDPR = false;
     }
     onShowHelp() {
@@ -33561,6 +33591,7 @@ class RechkoApp extends IoElement {
                 }] : null,
             this.showSettings ? ['rechko-settings', {
                     'on-close': this.onHideSettings,
+                    'on-show-gdpr': this.onShowGDPR,
                     hardMode: this.bind('hardMode'),
                     darkTheme: this.bind('darkTheme'),
                     colorblindMode: this.bind('colorblindMode'),

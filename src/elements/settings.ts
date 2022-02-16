@@ -28,6 +28,17 @@ export class RechkoSettings extends RechkoPopup {
         margin-top: 1em;
         flex-shrink: 0;
       }
+      :host .option > io-button {
+        --io-spacing: 1em;
+        --io-item-height: 3.5em;
+        flex: 1;  
+        font-weight: bold;
+        color: #ffffff;
+        background: var(--io-background-color-light);
+        border: none;
+        margin-top: 0.5em;
+        border-radius: 4px;
+      }
     `;
   }
   static get Properties() {
@@ -37,6 +48,10 @@ export class RechkoSettings extends RechkoPopup {
       colorblindMode: false,
       cookiesRequired: true,
     }
+  }
+  onShowGDPR() {
+    this.dispatchEvent('show-gdpr');
+    this.onClose();
   }
   changed() {
     this.template([
@@ -49,7 +64,12 @@ export class RechkoSettings extends RechkoPopup {
       ['div', {class: 'option'}, [
         ['span', 'Боје високог контраста'],
         ['io-switch', {value: this.bind('colorblindMode')}],
-      ]]
+      ]],
+      ['div', {class: 'option'}, [
+        ['span', 'Подешавање колачића'],
+        ['io-button', {label: 'ОТВОРИ', action: this.onShowGDPR}],
+      ]],
+
     ]);
   }
 }

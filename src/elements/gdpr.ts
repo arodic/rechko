@@ -4,6 +4,9 @@ import {RechkoPopup} from './popup';
 export class RechkoGdpr extends RechkoPopup {
   static get Style() {
     return /* css */`
+      :host {
+        z-index: 100;
+      }
       :host p:last-of-type {
         margin-bottom: 2em;
       }
@@ -79,6 +82,7 @@ export class RechkoGdpr extends RechkoPopup {
   }
   connectedCallback() {
     super.connectedCallback();
+    this.cookiesRequired = true;
     this.$.accept?.focus();
   }
   onDecline() {
@@ -97,7 +101,7 @@ export class RechkoGdpr extends RechkoPopup {
   }
   onAccept() {
     setTimeout(()=> {
-      this.dispatchEvent('close');
+      this.onClose();
     }, 500);
   }
   changed() {
