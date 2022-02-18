@@ -1,9 +1,13 @@
-import {IoElement, RegisterIoElement} from '@iogui/iogui';
+import { IoElement, RegisterIoElement } from '@iogui/iogui';
+import { IoThemeSingleton } from '@iogui/iogui/build/elements/core/theme.js';
+
+export * from '@iogui/iogui/build/elements/core/icon.js';
+export * from '@iogui/iogui/build/elements/core/button.js';
+export * from '@iogui/iogui/build/elements/core/switch.js';
+
 import { getWordOfTheDay, allWords } from './words'
 import { LetterState } from './types'
 import { history } from './history'
-
-import { IoThemeSingleton } from '@iogui/iogui';
 
 import './elements/board.js';
 import './elements/keyboard.js';

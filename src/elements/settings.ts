@@ -66,8 +66,7 @@ export class RechkoSettings extends RechkoPopup {
         ['io-switch', {value: this.bind('colorblindMode')}],
       ]],
       ['div', {class: 'option'}, [
-        ['span', 'Подешавање колачића'],
-        ['io-button', {label: 'ОТВОРИ', action: this.onShowGDPR}],
+        ['io-button', {label: 'Подешавање колачића', action: this.onShowGDPR}],
       ]],
 
     ]);

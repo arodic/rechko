@@ -1,4 +1,4 @@
-import {IoIconsetSingleton} from '@iogui/iogui';
+import {IoIconsetSingleton} from '@iogui/iogui/build/elements/core/iconset.js';
 
 IoIconsetSingleton.registerIcons('buttons', /* html */`
 <svg>

@@ -6,6 +6,7 @@ export class RechkoBoard extends IoElement {
       :host {
         overflow: hidden;
         padding: 5px;
+        margin: 1em 1em 1em 1em;
         box-sizing: border-box;
       }
       :host .correct,
