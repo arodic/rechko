@@ -19,11 +19,13 @@ import './elements/icons.js';
 
 IoThemeSingleton.theme = JSON.parse(localStorage.getItem('darkTheme') || 'false') ? 'dark' : 'light';
 
+const today = Math.floor(Number(new Date()) / (1000 * 60 * 60 * 24));
+
 // Get word of the day
-const answer = getWordOfTheDay();
+const answer = getWordOfTheDay(today);
 
 // Board state. Each tile is represented as { letter, state }
-const board = history.loadToday() || Array.from({ length: 6 }, () =>
+const board = history.load(today) || Array.from({ length: 6 }, () =>
 Array.from({ length: 5 }, () => ({
   letter: '',
   state: LetterState.INITIAL
@@ -211,7 +213,7 @@ export class RechkoApp extends IoElement {
       if (this.cookiesImprovement) fetch(`/word_ok/${guess}`);
       this.completeGame();
       if (this.cookiesRequired) {
-        history.save(board);
+        history.save(board, today);
         allHistory = history.loadAll();
       }
     } else {

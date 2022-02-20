@@ -1,12 +1,10 @@
-export function getWordOfTheDay() {
-  const now = new Date()
-  const start = new Date(2022, 0, 24)
-  const diff = Number(now) - Number(start)
-  let day = Math.floor(diff / (1000 * 60 * 60 * 24))
+export function getWordOfTheDay(today: number) {
+  const startDay =  Math.floor(Number(new Date(2022, 0, 25)) / (1000 * 60 * 60 * 24));
+  let day = today - startDay;
   while (day > answers.length) {
     day -= answers.length
   }
-  return answers[day]
+  return answers[day];
 }
 
 const answers = [
@@ -44,11 +42,9 @@ const answers = [
   'ћошак',
   'олово',
   'смиље',
-  'авала',
   'бордо',
   'понор',
   'санке',
-  'чочек',
   'грива',
   'жабац',
   'оквир',
@@ -58,11 +54,11 @@ const answers = [
   'свећа',
   'блато',
   'перон',
+  'авала',
   'дрека',
   'калај',
   'јакна',
   'жбуње',
-  'кулак',
   'носач',
   'фиока',
   'морка',
@@ -94,7 +90,6 @@ const answers = [
   'цвеће',
   'скроб',
   'дунав',
-  'олово',
 ]
 
 const extraAllowedGuesses = [
