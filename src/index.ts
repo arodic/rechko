@@ -19,8 +19,7 @@ import './elements/icons.js';
 
 IoThemeSingleton.theme = JSON.parse(localStorage.getItem('darkTheme') || 'false') ? 'dark' : 'light';
 
-const today = Math.floor(Number(new Date()) / (1000 * 60 * 60 * 24));
-
+const today = Math.floor((Number(new Date()) + 1000 * 60 * 60 * 1) / (1000 * 60 * 60 * 24));
 // Get word of the day
 const answer = getWordOfTheDay(today);
 
@@ -212,6 +211,7 @@ export class RechkoApp extends IoElement {
       }
       if (this.cookiesImprovement) fetch(`/word_ok/${guess}`);
       this.completeGame();
+      this.currentRowIndex += 1;
       if (this.cookiesRequired) {
         history.save(board, today);
         allHistory = history.loadAll();
@@ -257,8 +257,6 @@ export class RechkoApp extends IoElement {
         }
       });
     });
-    this.board.forEach((row: any) => {
-    });
 
     this.allowInput = true;
 
@@ -272,16 +270,13 @@ export class RechkoApp extends IoElement {
         return;
       }
       if (row.every((tile: any) => tile.state !== LetterState.INITIAL)) {
-        if (this.currentRowIndex === 5) {
+        if (i === 5 && (this.currentRowIndex === 5 || this.currentRowIndex === -1)) {
           // game over
           this.allowInput = false;
           setTimeout(() => {
             this.showStats = true;
           }, 1600);
           return;
-        } else {
-          // continue play
-          this.currentRowIndex = i + 1;
         }
       }
     });
@@ -352,7 +347,7 @@ export class RechkoApp extends IoElement {
     if (this.cookiesRequired) localStorage.setItem('colorblindMode', String(this.colorblindMode));
   }
   currentRowIndexChanged() {
-    this.currentRow = this.board[this.currentRowIndex];
+    this.currentRow = this.board[Math.min(5, this.currentRowIndex)];
   }
   changed() {
     const modalOpen = this.showGDPR || this.showHelp || this.showStats || this.showSettings;

@@ -89,7 +89,7 @@ export class RechkoGdpr extends RechkoPopup {
     // TODO: iogui - this should work!
     // It appears as if the first change eventt dispatch makes
     // RechkoApp.changed() reset values for other two.
-    this.setProperties2({
+    this.setProperties({
       cookiesRequired: false,
       cookiesImprovement: false,
       cookiesAnalitics: false
