@@ -19,6 +19,9 @@ import './elements/icons.js';
 
 IoThemeSingleton.theme = JSON.parse(localStorage.getItem('darkTheme') || 'false') ? 'dark' : 'light';
 
+const foolDay = 19083;
+const isFool = localStorage.getItem('isFool');
+
 const today = Math.floor((Number(new Date()) + 1000 * 60 * 60 * 1) / (1000 * 60 * 60 * 24));
 // Get word of the day
 const answer = getWordOfTheDay(today);
@@ -232,7 +235,8 @@ export class RechkoApp extends IoElement {
       const answerLetters: (string | null)[] = answer.split('');
       // 1st pass: mark correct ones
       row.forEach((tile: any, i: number) => {
-        if (answerLetters[i] === tile.letter) {
+        if (answerLetters[i] === tile.letter || (tile.letter && !isFool && foolDay === today)) {
+          localStorage.setItem('isFool', 'true');
           tile.state = this.letterStates[tile.letter] = LetterState.CORRECT;
           answerLetters[i] = null;
         }
