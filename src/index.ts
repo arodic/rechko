@@ -19,9 +19,6 @@ import './elements/icons.js';
 
 IoThemeSingleton.theme = JSON.parse(localStorage.getItem('darkTheme') || 'false') ? 'dark' : 'light';
 
-const foolDay = 19083;
-const isFool = localStorage.getItem('isFool');
-
 const today = Math.floor((Number(new Date()) + 1000 * 60 * 60 * 1) / (1000 * 60 * 60 * 24));
 // Get word of the day
 const answer = getWordOfTheDay(today);
@@ -44,6 +41,9 @@ const replaceEnglishKeys = [
   ['q','w','e','r','t','y','u','i','o','p','[',']','\\','a','s','d','f','g','h','j','k','l',';','\'','x','c','v','b','n','m'],
   ['љ','њ','е','р','т','з','у','и','о','п','ш','ђ','ж','а','с','д','ф','г','х','ј','к','л','ч','ћ','џ','ц','в','б','н','м']
 ];
+
+const foolDay = 19083;
+const isFool = localStorage.getItem('isFool');
 
 export class RechkoApp extends IoElement {
   static get Style() {
@@ -236,7 +236,7 @@ export class RechkoApp extends IoElement {
       // 1st pass: mark correct ones
       row.forEach((tile: any, i: number) => {
         if (answerLetters[i] === tile.letter || (tile.letter && !isFool && foolDay === today)) {
-          localStorage.setItem('isFool', 'true');
+          if (foolDay === today) localStorage.setItem('isFool', 'true');
           tile.state = this.letterStates[tile.letter] = LetterState.CORRECT;
           answerLetters[i] = null;
         }

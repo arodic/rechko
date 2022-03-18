@@ -8,7 +8,8 @@ export function getWordOfTheDay(today: number) {
 }
 
 const answers = [
-  'бетон',
+  'речко.срб смара',
+  // 'бетон',
   'варош',
   'ајвар',
   'труба',
@@ -171,7 +172,7 @@ const answers = [
   'скроб',
   'дунав',
   'гамет',
-]
+];
 
 const extraAllowedGuesses = [
   'речко',
