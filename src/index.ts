@@ -23,6 +23,7 @@ const today = Math.floor((Number(new Date()) + 1000 * 60 * 60 * 1) / (1000 * 60 
 // Get word of the day
 const answer = getWordOfTheDay(today);
 
+
 // Board state. Each tile is represented as { letter, state }
 const board = history.load(today) || Array.from({ length: 6 }, () =>
 Array.from({ length: 5 }, () => ({
