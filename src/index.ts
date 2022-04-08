@@ -43,9 +43,6 @@ const replaceEnglishKeys = [
   ['љ','њ','е','р','т','з','у','и','о','п','ш','ђ','ж','а','с','д','ф','г','х','ј','к','л','ч','ћ','џ','ц','в','б','н','м']
 ];
 
-const foolDay = 19083;
-const isFool = localStorage.getItem('isFool');
-
 export class RechkoApp extends IoElement {
   static get Style() {
     return /* css */`
@@ -236,8 +233,7 @@ export class RechkoApp extends IoElement {
       const answerLetters: (string | null)[] = answer.split('');
       // 1st pass: mark correct ones
       row.forEach((tile: any, i: number) => {
-        if (answerLetters[i] === tile.letter || (tile.letter && !isFool && foolDay === today)) {
-          if (foolDay === today) localStorage.setItem('isFool', 'true');
+        if (answerLetters[i] === tile.letter) {
           tile.state = this.letterStates[tile.letter] = LetterState.CORRECT;
           answerLetters[i] = null;
         }
