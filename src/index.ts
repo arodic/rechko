@@ -19,10 +19,9 @@ import './elements/icons.js';
 
 IoThemeSingleton.theme = JSON.parse(localStorage.getItem('darkTheme') || 'false') ? 'dark' : 'light';
 
-const today = Math.floor((Number(new Date()) + 1000 * 60 * 60 * 1) / (1000 * 60 * 60 * 24));
+const today = Math.floor((Number(new Date()) + 1000 * 60 * 60 * 2) / (1000 * 60 * 60 * 24));
 // Get word of the day
 const answer = getWordOfTheDay(today);
-
 
 // Board state. Each tile is represented as { letter, state }
 const board = history.load(today) || Array.from({ length: 6 }, () =>
