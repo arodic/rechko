@@ -22,7 +22,7 @@ IoThemeSingleton.theme = JSON.parse(localStorage.getItem('darkTheme') || 'false'
 const today = Math.floor((Number(new Date()) + 1000 * 60 * 60 * 2) / (1000 * 60 * 60 * 24));
 // Get word of the day
 const answer = getWordOfTheDay(today);
-
+console.log(answer);
 // Board state. Each tile is represented as { letter, state }
 const board = history.load(today) || Array.from({ length: 6 }, () =>
 Array.from({ length: 5 }, () => ({
