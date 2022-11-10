@@ -206,10 +206,10 @@ export class RechkoApp extends IoElement {
       if (!allWords.includes(guess) && guess !== answer) {
         this.shake();
         this.showMessage(`Реч није на листи`);
-        if (this.cookiesImprovement) fetch(`/word_nok/${guess}`);
+        if (this.cookiesImprovement) fetch(`https://analytics.rechko.com/word_nok/${guess}`);
         return;
       }
-      if (this.cookiesImprovement) fetch(`/word_ok/${guess}`);
+      if (this.cookiesImprovement) fetch(`https://analytics.rechko.com/word_ok/${guess}`);
       this.completeGame();
       this.currentRowIndex += 1;
       if (this.cookiesRequired) {
