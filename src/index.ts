@@ -1,5 +1,6 @@
 import { IoElement, RegisterIoElement } from '@iogui/iogui';
 import { IoThemeSingleton } from '@iogui/iogui/build/elements/core/theme.js';
+import { IoStorageFactory as $ } from '@iogui/iogui/build/elements/core/storage.js';
 
 export * from '@iogui/iogui/build/elements/core/icon.js';
 export * from '@iogui/iogui/build/elements/core/button.js';
@@ -14,6 +15,7 @@ import './elements/keyboard.js';
 import './elements/gdpr.js';
 import './elements/help.js';
 import './elements/stats.js';
+import './elements/puppies.js';
 import './elements/settings.js';
 import './elements/icons.js';
 
@@ -130,6 +132,7 @@ export class RechkoApp extends IoElement {
       showHelp: false,
       showStats: false,
       showSettings: false,
+      showPuppies: $({key: 'puppies', storage: 'hash', value: false}),
       hardMode: JSON.parse(localStorage.getItem('hardMode') || 'false'),
       darkTheme: JSON.parse(localStorage.getItem('darkTheme') || 'false'),
       colorblindMode: {
@@ -266,6 +269,7 @@ export class RechkoApp extends IoElement {
         this.allowInput = false;
         setTimeout(() => {
           this.showStats = true;
+          if (today === 19346) this.showPuppies = true;
         }, 1600);
         return;
       }
@@ -315,11 +319,17 @@ export class RechkoApp extends IoElement {
   onHideStats() {
     this.showStats = false;
   }
-  onShowSetttings() {
+  onShowSettings() {
     this.showSettings = true;
   }
   onHideSettings() {
     this.showSettings = false;
+  }
+  onShowPuppies() {
+    this.showPuppies = true;
+  }
+  onHidePuppies() {
+    this.showPuppies = false;
   }
   onMessage(event: CustomEvent) {
     this.showMessage(event.detail.message);
@@ -356,7 +366,7 @@ export class RechkoApp extends IoElement {
         !modalOpen ? ['io-icon', {class:'helpIcon', icon: 'buttons:help', 'on-click': this.onShowHelp}] : null,
         ['h1', 'РЕЧКО'],
         (!modalOpen && this.cookiesRequired) ? ['io-icon', {class:'statsIcon', icon: 'buttons:stats', 'on-click': this.onShowStats}] : null,
-        !modalOpen ? ['io-icon', {class:'settingsIcon', icon: 'buttons:settings', 'on-click': this.onShowSetttings}] : null,
+        !modalOpen ? ['io-icon', {class:'settingsIcon', icon: 'buttons:settings', 'on-click': this.onShowSettings}] : null,
       ]],
       ['rechko-board', {class: 'notranslate', board: this.board, shakeRowIndex: this.shakeRowIndex}],
       ['rechko-keyboard', {
@@ -384,6 +394,10 @@ export class RechkoApp extends IoElement {
         hardMode: this.bind('hardMode'),
         darkTheme: this.bind('darkTheme'),
         colorblindMode: this.bind('colorblindMode'),
+      }] : null,
+      this.showPuppies ? ['rechko-puppies', {
+        'on-close': this.onHidePuppies,
+        'on-message': this.onMessage,
       }] : null,
       this.message ? ['div', {class: 'message'}, this.message] : null
     ]);
