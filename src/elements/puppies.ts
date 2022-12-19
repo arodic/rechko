@@ -76,8 +76,8 @@ export class RechkoPuppies extends RechkoPopup {
       ['h3', {class: 'answer'}, this.shareText],
       ['io-icon', {icon: 'icons:close', 'on-click': this.onClose}],
       ['div', {class: 'puppies'}, [
-        ['img', {src: 'images/nora.jpeg'}],
-        ['img', {src: 'images/lea.jpeg'}],
+        ['img', {src: 'images/nora.jpg'}],
+        ['img', {src: 'images/lea.jpg'}],
       ]],
       ['button', {'on-click': this.onShare}, [
         ['span', 'Подели'],
@@ -87,7 +87,8 @@ export class RechkoPuppies extends RechkoPopup {
         ['div', [
           ['p', 'Узраст: 3 месеца'],
           ['p', 'Мајка: Рајка (Епањел бретон)'],
-          ['p', 'Одбачена скотна женка удомљена у нашем домаћинству. Донела је на свет Нору и Леу којима тражимо нови дом. Штенце доносимо лично на територији Србијe и региона!'],
+          ['p', 'Рајка нам је дошла уплашена и мршава. Хранили смо је и пазили, и један дан је на свет донела Нору и Леу. Сад им тражимо нови дом. Штенце доносимо на територији Србије (и Босне). А Рајка мајка остаје код нас!'],
+          ['p', 'Ако сте заинтересовани позовите на 0638829463'],
           ['a', {href: 'https://www.instagram.com/stories/highlights/17947876616265094/', target: '_blank'}, 'Погледајте више на Инстаграму'],
         ]],
         ['img', {src: 'images/rajka.jpeg'}],
