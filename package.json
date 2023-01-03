@@ -7,8 +7,11 @@
     "lib": "lib"
   },
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w"
+    "clean": "rm -rf build && rm -rf bundle",
+    "lint": "eslint src --fix",
+    "build": "yarn clean && yarn lint && tsc && rollup -c && rm -rf build && mv bundle build",
+    "dev": "yarn clean && yarn lint && tsc -w"
+
   },
   "repository": {
     "type": "git",
@@ -20,16 +23,17 @@
     "url": "https://github.com/arodic/rechko/issues"
   },
   "homepage": "https://github.com/arodic/rechko#readme",
-  "dependencies": {
-    "@iogui/iogui": "https://github.com/io-gui/iogui.git#v0.0.1-rc9",
-    "@rollup/plugin-node-resolve": "^13.1.3",
-    "@rollup/plugin-typescript": "^8.3.0",
-    "@types/gtag.js": "^0.0.8",
-    "rollup": "^2.67.0",
-    "tslib": "^2.3.1",
-    "typescript": "^4.5.5"
-  },
   "devDependencies": {
-    "rollup-plugin-uglify": "^6.0.4"
+    "io-gui": "1.4.0-rc5",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@types/gtag.js": "^0.0.8",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "eslint-plugin-html": "^7.1.0",
+    "rollup": "^3.5.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.3"
   }
 }

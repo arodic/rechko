@@ -1,13 +1,10 @@
-import { IoElement, RegisterIoElement } from '@iogui/iogui';
-import { IoThemeSingleton } from '@iogui/iogui/build/elements/core/theme.js';
+import { IoElement, RegisterIoElement } from 'io-gui';
+import { IoThemeSingleton } from 'io-gui';
+export * from 'io-gui';
 
-export * from '@iogui/iogui/build/elements/core/icon.js';
-export * from '@iogui/iogui/build/elements/core/button.js';
-export * from '@iogui/iogui/build/elements/core/switch.js';
-
-import { getWordOfTheDay, allWords } from './words'
-import { LetterState } from './types'
-import { history } from './history'
+import { getWordOfTheDay, allWords } from './words';
+import { LetterState } from './types';
+import { history } from './history';
 
 import './elements/board.js';
 import './elements/keyboard.js';
@@ -43,7 +40,7 @@ const replaceEnglishKeys = [
 ];
 
 export class RechkoApp extends IoElement {
-  static get Style() {
+  static get Style(): any {
     return /* css */`
       :host {
         display: flex;
@@ -113,7 +110,7 @@ export class RechkoApp extends IoElement {
       }
     `;
   }
-  static get Properties() {
+  static get Properties(): any {
     return {
       answer: answer,
       board: board,
@@ -136,7 +133,7 @@ export class RechkoApp extends IoElement {
         value: JSON.parse(localStorage.getItem('colorblindMode') || 'false'),
         reflect: 1
       }
-    }
+    };
   }
   constructor() {
     super();
@@ -164,29 +161,29 @@ export class RechkoApp extends IoElement {
     if (!this.allowInput) return;
     for (const k in replaceLatinKeys[0]) {
       if (key === replaceLatinKeys[0][k]) {
-        key = replaceLatinKeys[1][k]
+        key = replaceLatinKeys[1][k];
         continue;
       }
     }
     for (const k in replaceEnglishKeys[0]) {
       if (key === replaceEnglishKeys[0][k]) {
-        key = replaceEnglishKeys[1][k]
+        key = replaceEnglishKeys[1][k];
         continue;
       }
     }
     if (/^[љњертзуиопшђжасдфгхјклчћџцвбнмЉЊЕРТЗУИОПШЂЖАСДФГХЈКЛЧЋЏЦВБНМ]$/.test(key)) {
-      this.fillTile(key.toLowerCase())
+      this.fillTile(key.toLowerCase());
     } else if (key === 'Backspace') {
-      this.clearTile()
+      this.clearTile();
     } else if (key === 'Enter') {
-      this.completeRow()
+      this.completeRow();
     }
   }
   fillTile(letter: string) {
     for (const tile of this.currentRow) {
       if (!tile.letter) {
-        tile.letter = letter
-        break
+        tile.letter = letter;
+        break;
       }
     }
     this.emitUpdate();
@@ -194,22 +191,22 @@ export class RechkoApp extends IoElement {
   clearTile() {
     for (const tile of [...this.currentRow].reverse()) {
       if (tile.letter) {
-        tile.letter = ''
-        break
+        tile.letter = '';
+        break;
       }
     }
     this.emitUpdate();
   }
   completeRow() {
     if (this.currentRow.every((tile: any) => tile.letter)) {
-      const guess = this.currentRow.map((tile: any) => tile.letter).join('')
+      const guess = this.currentRow.map((tile: any) => tile.letter).join('');
       if (!allWords.includes(guess) && guess !== answer) {
         this.shake();
-        this.showMessage(`Реч није на листи`);
-        if (this.cookiesImprovement) fetch(`https://analytics.rechko.com/word_nok/${guess}`);
+        this.showMessage('Реч није на листи');
+        if (this.cookiesImprovement) void fetch(`https://analytics.rechko.com/word_nok/${guess}`);
         return;
       }
-      if (this.cookiesImprovement) fetch(`https://analytics.rechko.com/word_ok/${guess}`);
+      if (this.cookiesImprovement) void fetch(`https://analytics.rechko.com/word_ok/${guess}`);
       this.completeGame();
       this.currentRowIndex += 1;
       if (this.cookiesRequired) {
@@ -218,7 +215,7 @@ export class RechkoApp extends IoElement {
       }
     } else {
       this.shake();
-      this.showMessage('Нема довољно слова')
+      this.showMessage('Нема довољно слова');
     }
   }
   completeGame() {
@@ -226,7 +223,7 @@ export class RechkoApp extends IoElement {
     this.board.forEach((row: any) => {
       row.forEach((tile: any) => {
         tile.state = LetterState.INITIAL;
-      })
+      });
     });
     this.board.forEach((row: any) => {
       const answerLetters: (string | null)[] = answer.split('');
@@ -238,7 +235,7 @@ export class RechkoApp extends IoElement {
         }
       });
       // 2nd pass: mark the present
-      row.forEach((tile: any, i: number) => {
+      row.forEach((tile: any) => {
         if (!tile.state && answerLetters.includes(tile.letter)) {
           tile.state = LetterState.PRESENT;
           answerLetters[answerLetters.indexOf(tile.letter)] = null;
@@ -248,11 +245,11 @@ export class RechkoApp extends IoElement {
         }
       });
       // 3rd pass: mark absent
-      row.forEach((tile: any, i: number) => {
+      row.forEach((tile: any) => {
         if (tile.letter && !tile.state) {
-          tile.state = LetterState.ABSENT
+          tile.state = LetterState.ABSENT;
           if (!this.letterStates[tile.letter]) {
-            this.letterStates[tile.letter] = LetterState.ABSENT
+            this.letterStates[tile.letter] = LetterState.ABSENT;
           }
         }
       });
@@ -325,16 +322,16 @@ export class RechkoApp extends IoElement {
     this.showMessage(event.detail.message);
   }
   showMessage(msg: string, time = 1000) {
-    this.message = msg
+    this.message = msg;
     if (time > 0) {
       setTimeout(() => {
-        this.message = ''
-      }, time)
+        this.message = '';
+      }, time);
     }
   }
   shake() {
     this.shakeRowIndex = this.currentRowIndex;
-    setTimeout(() => { this.shakeRowIndex = -1 }, 1000)
+    setTimeout(() => { this.shakeRowIndex = -1; }, 1000);
   }
   hardModeChanged() {
     if (this.cookiesRequired) localStorage.setItem('hardMode', String(this.hardMode));

@@ -1,5 +1,5 @@
-import {RegisterIoElement} from '@iogui/iogui';
-import {LetterState} from '../types'
+import {RegisterIoElement} from 'io-gui';
+import {LetterState} from '../types';
 import {RechkoPopup} from './popup';
 
 const ICONS = {
@@ -7,7 +7,7 @@ const ICONS = {
   [LetterState.PRESENT]: '🟨',
   [LetterState.ABSENT]: '⬜',
   [LetterState.INITIAL]: null
-}
+};
 
 export class RechkoStats extends RechkoPopup {
   static get Style() {
@@ -90,13 +90,13 @@ export class RechkoStats extends RechkoPopup {
       gamesFinished: 0,
       gamesWon: 0,
       gameStats: [0, 0, 0, 0, 0, 0, 0]
-    }
+    };
   }
   historyChanged() {
     let gamesStarted = 0;
     let gamesFinished = 0;
     let gamesWon = 0;
-    let gameStats = [0, 0, 0, 0, 0, 0, 0];
+    const gameStats = [0, 0, 0, 0, 0, 0, 0];
     for (const day in this.history) {
       const game = this.history[day];
       if (game[0].every((tile: any) => tile.state !== LetterState.INITIAL)) {
@@ -120,7 +120,7 @@ export class RechkoStats extends RechkoPopup {
       gamesFinished: gamesFinished,
       gamesWon: gamesWon,
       gameStats: gameStats,
-    })
+    });
   }
   async onShare() {
     try {
@@ -128,7 +128,7 @@ export class RechkoStats extends RechkoPopup {
         text: this.shareText
       });
     } catch(err) {
-      navigator.clipboard.writeText(this.shareText);
+      void navigator.clipboard.writeText(this.shareText);
       this.dispatchEvent('message', {message: 'Резултат копиран'});
     }
 
@@ -145,7 +145,7 @@ export class RechkoStats extends RechkoPopup {
     let lastIndex = -1;
     this.win = false;
     this.finish = false;
-    this.board.forEach((row: any, i: number) => {
+    this.board.forEach((row: any) => {
       if (row.every((tile: any) => tile.state !== LetterState.INITIAL)) {
         lastIndex++;
       }
@@ -162,7 +162,7 @@ export class RechkoStats extends RechkoPopup {
     this.boardGrid = this.board
       .slice(0, lastIndex + 1)
       .map((row: any) => {
-        return row.map((tile: any) => (ICONS as any)[tile.state]).join('')
+        return row.map((tile: any) => (ICONS as any)[tile.state]).join('');
       })
       .join('\n');
     this.shareText = `rechko.com\n${day}/${month}/${year}\n${this.boardGrid}`;

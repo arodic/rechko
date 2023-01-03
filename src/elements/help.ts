@@ -1,5 +1,5 @@
-import {RegisterIoElement} from '@iogui/iogui';
-import {LetterState} from '../types'
+import {RegisterIoElement} from 'io-gui';
+import {LetterState} from '../types';
 import {RechkoPopup} from './popup';
 
 export class RechkoHelp extends RechkoPopup {
@@ -47,7 +47,7 @@ export class RechkoHelp extends RechkoPopup {
         {letter: 'г', state: 0},
         {letter: 'а', state: 0},
       ]]}],
-      ['p', 'Слово Л је погођено на тачном месту.'],      
+      ['p', 'Слово Л је погођено на тачном месту.'],
       ['rechko-board', {class: 'notranslate', board: [[
         {letter: 'н', state: 0},
         {letter: 'а', state: 0},

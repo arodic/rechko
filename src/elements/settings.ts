@@ -1,4 +1,4 @@
-import {RegisterIoElement} from '@iogui/iogui';
+import {RegisterIoElement} from 'io-gui';
 import {RechkoPopup} from './popup';
 
 export class RechkoSettings extends RechkoPopup {
@@ -47,7 +47,7 @@ export class RechkoSettings extends RechkoPopup {
       darkTheme: false,
       colorblindMode: false,
       cookiesRequired: true,
-    }
+    };
   }
   onShowGDPR() {
     this.dispatchEvent('show-gdpr');

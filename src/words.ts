@@ -2,7 +2,7 @@ export function getWordOfTheDay(today: number) {
   const startDay = Math.floor((Number(new Date(2022, 0, 24)) + 1000 * 60 * 60 * 2) / (1000 * 60 * 60 * 24));
   let day = today - startDay;
   while (day > answers.length) {
-    day -= answers.length
+    day -= answers.length;
   }
   return answers[day];
 }
@@ -215,7 +215,7 @@ const answers = [
   'кедер'
 ];
 
-let duplicates = answers.filter((item, index) => answers.indexOf(item) != index);
+let duplicates = answers.filter((item, index) => answers.indexOf(item) !== index);
 if (duplicates.length) console.error('duplicate answers', duplicates);
 
 const moreAllowedGuesses = [
@@ -415,7 +415,7 @@ const moreAllowedGuesses = [
   'пашта',
 ];
 
-duplicates = moreAllowedGuesses.filter((item, index) => moreAllowedGuesses.indexOf(item) != index);
+duplicates = moreAllowedGuesses.filter((item, index) => moreAllowedGuesses.indexOf(item) !== index);
 if (duplicates.length) console.error('duplicate moreAllowedGuesses', duplicates);
 
 let allowedGuesses = [
@@ -18394,7 +18394,7 @@ let allowedGuesses = [
 
 allowedGuesses = [...moreAllowedGuesses, ...allowedGuesses];
 
-duplicates = allowedGuesses.filter((item, index) => allowedGuesses.indexOf(item) != index);
+duplicates = allowedGuesses.filter((item, index) => allowedGuesses.indexOf(item) !== index);
 if (duplicates.length) console.error('duplicate allowedGuesses', duplicates);
 
-export const allWords = [...answers, ...allowedGuesses]
+export const allWords = [...answers, ...allowedGuesses];

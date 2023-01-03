@@ -1,4 +1,4 @@
-import {RegisterIoElement, PropertiesDeclaration} from '@iogui/iogui';
+import {RegisterIoElement} from 'io-gui';
 import {RechkoPopup} from './popup';
 
 export class RechkoGdpr extends RechkoPopup {
@@ -73,12 +73,12 @@ export class RechkoGdpr extends RechkoPopup {
       }
     `;
   }
-  static get Properties(): PropertiesDeclaration {
+  static get Properties(): any {
     return {
       cookiesRequired: true,
       cookiesImprovement: true,
       cookiesAnalitics: true,
-    }
+    };
   }
   connectedCallback() {
     super.connectedCallback();

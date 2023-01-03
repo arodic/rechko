@@ -1,15 +1,42 @@
-import typescript from '@rollup/plugin-typescript';
+import path from 'path';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import { uglify } from "rollup-plugin-uglify";
+import strip from '@rollup/plugin-strip';
+import { terser } from "rollup-plugin-terser";
 
-export default {
-  input: 'src/index.ts',
-  output: {
-    file: 'build/index.js'
-  },
-  plugins: [
-    nodeResolve(),
-    uglify(),
-    typescript({ tsconfig: './tsconfig.json', module: "ESNext" })
-  ]
-};
+function makeBundleTarget(src, target, externals = [], debug) {
+
+  externals.forEach(function(part, index) {
+    externals[index] = path.resolve(externals[index]);
+  });
+
+  return {
+    input: src,
+    plugins: [
+      nodeResolve(),
+      strip({
+        functions: [],
+        labels: debug ? [] : ['debug']
+      }),
+      terser({
+        keep_classnames: true,
+        keep_fnames: true,
+      })
+    ],
+    treeshake: true,
+    output: [{
+      inlineDynamicImports: true,
+      format: 'es',
+      file: target,
+      indent: '  '
+    }],
+    external: externals,
+    onwarn: (warning, warn) => {
+      if (warning.code === 'THIS_IS_UNDEFINED') return;
+      warn(warning);
+    }
+  };
+}
+
+export default [
+  makeBundleTarget('build/index.js', 'bundle/index.js'),
+];

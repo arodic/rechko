@@ -1,4 +1,4 @@
-import {IoElement, RegisterIoElement, PropertiesDeclaration} from '@iogui/iogui';
+import {IoElement, RegisterIoElement} from 'io-gui';
 
 export class RechkoPopup extends IoElement {
   static get Style() {
@@ -38,13 +38,13 @@ export class RechkoPopup extends IoElement {
       }
     `;
   }
-  static get Properties(): PropertiesDeclaration {
+  static get Properties(): any {
     return {
       show: {
         value: false,
         reflect: 1
       }
-    }
+    };
   }
   connectedCallback() {
     super.connectedCallback();

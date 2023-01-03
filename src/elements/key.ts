@@ -1,4 +1,4 @@
-import {IoElement, RegisterIoElement} from '@iogui/iogui';
+import {IoElement, RegisterIoElement} from 'io-gui';
 
 export class RechkoKey extends IoElement {
   static get Style() {
@@ -53,7 +53,7 @@ export class RechkoKey extends IoElement {
       }
     `;
   }
-  static get Properties() {
+  static get Properties(): any {
     return {
       key: '',
       big: {
@@ -64,9 +64,9 @@ export class RechkoKey extends IoElement {
         value: '',
         reflect: 1,
       }
-    }
+    };
   }
-  onClick(event: MouseEvent) {
+  onClick() {
     this.dispatchEvent('key', this.key, true);
   }
   keyChanged() {

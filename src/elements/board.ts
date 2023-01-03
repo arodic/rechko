@@ -1,4 +1,4 @@
-import {IoElement, RegisterIoElement} from '@iogui/iogui';
+import {IoElement, RegisterIoElement} from 'io-gui';
 
 export class RechkoBoard extends IoElement {
   static get Style() {
@@ -134,7 +134,7 @@ export class RechkoBoard extends IoElement {
       }
     `;
   }
-  static get Properties() {
+  static get Properties(): any {
     return {
       board: {
         value: [],
@@ -142,10 +142,10 @@ export class RechkoBoard extends IoElement {
       },
       shakeRowIndex: -1,
       translate: {
-        value: "no",
+        value: 'no',
         reflect: 1
       }
-    }
+    };
   }
   onResized() {
     const rect = this.getBoundingClientRect();
@@ -158,8 +158,8 @@ export class RechkoBoard extends IoElement {
         return ['div', {class: `tile ${tile.letter && 'filled'} ${tile.state && 'revealed'}`}, [
           ['div', {class: 'front', style: {'transition-delay': `${j * 300}ms`}}, tile.letter],
           ['div', {class: `back ${tile.state}`, style: {'transition-delay': `${j * 300}ms`}}, tile.letter],
-        ]]
-      })]
+        ]];
+      })];
     }));
   }
 }

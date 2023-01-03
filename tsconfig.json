@@ -1,38 +1,39 @@
 {
   "compilerOptions": {
+    /* Basic Options */
     "target": "esnext",
-    "useDefineForClassFields": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "strict": true,
-    "jsx": "preserve",
+    "lib": ["esnext.array", "esnext", "dom"],
+    "declaration": true,
+    "declarationMap": true,
     "sourceMap": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "lib": ["esnext", "dom"],
-    "allowJs": true,
-    "checkJs": true,
-    // "declaration": true,
-    // "declarationMap": true,
-    "rootDir": "./src",
-    // "outFile": "./build/index.js",
+    // "inlineSources": true,
     /* Strict Type-Checking Options */
-    "noImplicitAny": true,
+    "strict": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
-    "noImplicitThis": true,
     "alwaysStrict": true,
-    /* Additional Checks */
     "noUnusedLocals": true,
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    /* Module Resolution Options */
-    /* Experimental Options */
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    //
+    "forceConsistentCasingInFileNames": true,
+    //
+    "rootDir": "./src",
+    "outDir": "./build",
+    /* Module Options */
+    "esModuleInterop": true,
+    "allowJs": true,
+    "checkJs": true,
+    // Only necessary because @types/uglify-js can't find types for source-map
+    // "skipLibCheck": true,
     "experimentalDecorators": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "useDefineForClassFields": true
   },
-  "include": ["env.d.ts", "src/**/*", "node_modules/@iogui/iogui/**/*"]
+  "include": ["./src"]
 }

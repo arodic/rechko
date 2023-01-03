@@ -1,11 +1,11 @@
-import {IoElement, RegisterIoElement} from '@iogui/iogui';
+import {IoElement, RegisterIoElement} from 'io-gui';
 import './key.js';
 
 const rows = [
   'љњертзуиопш'.split(''),
   'асдфгхјклчћ'.split(''),
   ['Enter', ...'џцвбнмђж'.split(''), 'Backspace']
-]
+];
 
 export class RechkoKeyboard extends IoElement {
   static get Style() {
@@ -29,23 +29,23 @@ export class RechkoKeyboard extends IoElement {
       }
     `;
   }
-  static get Properties() {
+  static get Properties(): any {
     return {
       letterStates: {
         type: Object,
         observe: true
       },
       translate: {
-        value: "no",
+        value: 'no',
         reflect: 1
       }
-    }
+    };
   }
   changed() {
     this.template(rows.map(row => {
       return ['div', row.map(key => {
         return ['rechko-key', {key: key, state: this.letterStates[key] || ''}];
-      })]
+      })];
     }));
   }
 }
