@@ -1,6 +1,5 @@
 import path from 'path';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import strip from '@rollup/plugin-strip';
 import { terser } from "rollup-plugin-terser";
 
 function makeBundleTarget(src, target, externals = [], debug) {
@@ -13,10 +12,6 @@ function makeBundleTarget(src, target, externals = [], debug) {
     input: src,
     plugins: [
       nodeResolve(),
-      strip({
-        functions: [],
-        labels: debug ? [] : ['debug']
-      }),
       terser({
         keep_classnames: true,
         keep_fnames: true,

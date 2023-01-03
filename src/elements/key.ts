@@ -19,7 +19,7 @@ export class RechkoKey extends IoElement {
         padding: 0;
         cursor: pointer;
         user-select: none;
-        background-color: var(--iotBackgroundColor-dark);
+        background-color: var(--iotBackgroundColorDimmed);
         color: var(--iotColor);
         flex: 1;
         display: flex;
@@ -50,7 +50,7 @@ export class RechkoKey extends IoElement {
         background-color: #c9b458 !important;
       }
       :host[state=absent] button {
-        background-color: var(--iotBackgroundColor-light) !important;
+        background-color: var(--iotBackgroundColorDimmed) !important;
       }
     `;
   }

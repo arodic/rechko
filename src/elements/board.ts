@@ -5,6 +5,7 @@ export class RechkoBoard extends IoElement {
   static get Style() {
     return /* css */`
       :host {
+        display: block;
         overflow: hidden;
         padding: 5px;
         margin: 1em 1em 1em 1em;
@@ -22,7 +23,7 @@ export class RechkoBoard extends IoElement {
         background-color: #c9b458 !important;
       }
       :host .absent {
-        background-color: var(--iotBackgroundColor-light) !important;
+        background-color: var(--iotBackgroundColorStrong) !important;
       }
       :host .row {
         display: flex;

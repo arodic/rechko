@@ -35,7 +35,7 @@ export class RechkoSettings extends RechkoPopup {
         flex: 1;  
         font-weight: bold;
         color: #ffffff;
-        background: var(--iotBackgroundColor-light);
+        background: var(--iotBackgroundColorDimmed);
         border: none;
         margin-top: 0.5em;
         border-radius: 4px;
