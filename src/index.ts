@@ -2,9 +2,9 @@ import { IoElement, RegisterIoElement } from 'io-gui';
 import { IoThemeSingleton } from 'io-gui';
 export * from 'io-gui';
 
-import { getWordOfTheDay, allWords } from './words';
-import { LetterState } from './types';
-import { history } from './history';
+import { getWordOfTheDay, allWords } from './words.js';
+import { LetterState } from './types.js';
+import { history } from './history.js';
 
 import './elements/board.js';
 import './elements/keyboard.js';
@@ -39,6 +39,7 @@ const replaceEnglishKeys = [
   ['љ','њ','е','р','т','з','у','и','о','п','ш','ђ','ж','а','с','д','ф','г','х','ј','к','л','ч','ћ','џ','ц','в','б','н','м']
 ];
 
+@RegisterIoElement
 export class RechkoApp extends IoElement {
   static get Style(): any {
     return /* css */`
@@ -47,13 +48,13 @@ export class RechkoApp extends IoElement {
         position: relative;
         height: 100%;
         flex-direction: column;
-        background: var(--io-background-color);
-        color: var(--io-color);
+        background: var(--iotBackgroundColor);
+        color: var(--iotColor);
         overflow: hidden;
       }
       :host > header {
         flex: 0 0 auto;
-        border-bottom: 1px solid var(--io-color-border);
+        border-bottom: 1px solid var(--iotBorderColor);
         position: relative;
       }
       :host > header > h1 {
@@ -131,13 +132,13 @@ export class RechkoApp extends IoElement {
       darkTheme: JSON.parse(localStorage.getItem('darkTheme') || 'false'),
       colorblindMode: {
         value: JSON.parse(localStorage.getItem('colorblindMode') || 'false'),
-        reflect: 1
+        reflect: true
       }
     };
   }
-  constructor() {
-    super();
+  init() {
     this.completeGame();
+    this.changed();
   }
   connectedCallback() {
     super.connectedCallback();
@@ -386,5 +387,3 @@ export class RechkoApp extends IoElement {
     ]);
   }
 }
-
-RegisterIoElement(RechkoApp);

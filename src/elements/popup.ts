@@ -1,5 +1,6 @@
 import {IoElement, RegisterIoElement} from 'io-gui';
 
+@RegisterIoElement
 export class RechkoPopup extends IoElement {
   static get Style() {
     return /* css */`
@@ -7,7 +8,7 @@ export class RechkoPopup extends IoElement {
         display: flex;
         flex-direction: column;
         position: absolute;
-        background: var(--io-background-color);
+        background: var(--iotBackgroundColor);
         padding: 0 2em;
         top: 3.4em;
         opacity: 0;
@@ -42,7 +43,7 @@ export class RechkoPopup extends IoElement {
     return {
       show: {
         value: false,
-        reflect: 1
+        reflect: true
       }
     };
   }
@@ -66,5 +67,3 @@ export class RechkoPopup extends IoElement {
     ]);
   }
 }
-
-RegisterIoElement(RechkoPopup);

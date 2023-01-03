@@ -1,15 +1,16 @@
 import {RegisterIoElement} from 'io-gui';
-import {RechkoPopup} from './popup';
+import {RechkoPopup} from './popup.js';
 
+@RegisterIoElement
 export class RechkoSettings extends RechkoPopup {
   static get Style() {
     return /* css */`
       :host io-switch {
-        --io-line-height: 30px;
-        --io-item-height: 40px;
+         --iotLineHeight: 30px;
+         --iotFieldHeight: 40px;
       }
       :host .option:first-of-type {
-        border-top: 1px solid var(--io-color-border);
+        border-top: 1px solid var(--iotBorderColor);
       }
       :host .option {
         display: flex;
@@ -17,7 +18,7 @@ export class RechkoSettings extends RechkoPopup {
         white-space: nowrap;
         font-size: 1.3em;
         line-height: 3em;
-        border-bottom: 1px solid var(--io-color-border);
+        border-bottom: 1px solid var(--iotBorderColor);
       }
       :host .option > span {
         flex: 1 1 auto;
@@ -29,12 +30,12 @@ export class RechkoSettings extends RechkoPopup {
         flex-shrink: 0;
       }
       :host .option > io-button {
-        --io-spacing: 1em;
-        --io-item-height: 3.5em;
+        --iotSpacing: 1em;
+         --iotFieldHeight: 3.5em;
         flex: 1;  
         font-weight: bold;
         color: #ffffff;
-        background: var(--io-background-color-light);
+        background: var(--iotBackgroundColor-light);
         border: none;
         margin-top: 0.5em;
         border-radius: 4px;
@@ -72,5 +73,3 @@ export class RechkoSettings extends RechkoPopup {
     ]);
   }
 }
-
-RegisterIoElement(RechkoSettings);

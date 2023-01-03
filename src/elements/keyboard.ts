@@ -7,6 +7,7 @@ const rows = [
   ['Enter', ...'џцвбнмђж'.split(''), 'Backspace']
 ];
 
+@RegisterIoElement
 export class RechkoKeyboard extends IoElement {
   static get Style() {
     return /* css */`
@@ -37,7 +38,7 @@ export class RechkoKeyboard extends IoElement {
       },
       translate: {
         value: 'no',
-        reflect: 1
+        reflect: true
       }
     };
   }
@@ -49,5 +50,3 @@ export class RechkoKeyboard extends IoElement {
     }));
   }
 }
-
-RegisterIoElement(RechkoKeyboard);

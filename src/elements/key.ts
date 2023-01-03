@@ -1,5 +1,6 @@
 import {IoElement, RegisterIoElement} from 'io-gui';
 
+@RegisterIoElement
 export class RechkoKey extends IoElement {
   static get Style() {
     return /* css */`
@@ -18,8 +19,8 @@ export class RechkoKey extends IoElement {
         padding: 0;
         cursor: pointer;
         user-select: none;
-        background-color: var(--io-background-color-dark);
-        color: var(--io-color);
+        background-color: var(--iotBackgroundColor-dark);
+        color: var(--iotColor);
         flex: 1;
         display: flex;
         justify-content: center;
@@ -29,7 +30,7 @@ export class RechkoKey extends IoElement {
       }
       :host io-icon {
         margin: auto;
-        fill: var(--io-color);
+        fill: var(--iotColor);
       }
       :host[big] {
         flex: 3;
@@ -49,7 +50,7 @@ export class RechkoKey extends IoElement {
         background-color: #c9b458 !important;
       }
       :host[state=absent] button {
-        background-color: var(--io-background-color-light) !important;
+        background-color: var(--iotBackgroundColor-light) !important;
       }
     `;
   }
@@ -58,11 +59,11 @@ export class RechkoKey extends IoElement {
       key: '',
       big: {
         value: false,
-        reflect: 1,
+        reflect: true,
       },
       state: {
         value: '',
-        reflect: 1,
+        reflect: true,
       }
     };
   }
@@ -80,5 +81,3 @@ export class RechkoKey extends IoElement {
     ]]]);
   }
 }
-
-RegisterIoElement(RechkoKey);

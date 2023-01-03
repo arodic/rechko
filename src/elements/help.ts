@@ -1,7 +1,8 @@
 import {RegisterIoElement} from 'io-gui';
-import {LetterState} from '../types';
-import {RechkoPopup} from './popup';
+import {LetterState} from '../types.js';
+import {RechkoPopup} from './popup.js';
 
+@RegisterIoElement
 export class RechkoHelp extends RechkoPopup {
   static get Style() {
     return /* css */`
@@ -68,5 +69,3 @@ export class RechkoHelp extends RechkoPopup {
     ]);
   }
 }
-
-RegisterIoElement(RechkoHelp);

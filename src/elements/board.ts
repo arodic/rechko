@@ -1,5 +1,6 @@
 import {IoElement, RegisterIoElement} from 'io-gui';
 
+@RegisterIoElement
 export class RechkoBoard extends IoElement {
   static get Style() {
     return /* css */`
@@ -21,7 +22,7 @@ export class RechkoBoard extends IoElement {
         background-color: #c9b458 !important;
       }
       :host .absent {
-        background-color: var(--io-background-color-light) !important;
+        background-color: var(--iotBackgroundColor-light) !important;
       }
       :host .row {
         display: flex;
@@ -60,7 +61,7 @@ export class RechkoBoard extends IoElement {
         -webkit-backface-visibility: hidden;
       }
       :host .tile .front {
-        border: 1px solid var(--io-color-border);
+        border: 1px solid var(--iotBorderColor);
       }
       :host .tile .back {
         transform: rotateX(180deg);
@@ -143,7 +144,7 @@ export class RechkoBoard extends IoElement {
       shakeRowIndex: -1,
       translate: {
         value: 'no',
-        reflect: 1
+        reflect: true
       }
     };
   }
@@ -163,5 +164,3 @@ export class RechkoBoard extends IoElement {
     }));
   }
 }
-
-RegisterIoElement(RechkoBoard);

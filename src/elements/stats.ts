@@ -1,6 +1,6 @@
 import {RegisterIoElement} from 'io-gui';
-import {LetterState} from '../types';
-import {RechkoPopup} from './popup';
+import {LetterState} from '../types.js';
+import {RechkoPopup} from './popup.js';
 
 const ICONS = {
   [LetterState.CORRECT]: '🟩',
@@ -9,6 +9,7 @@ const ICONS = {
   [LetterState.INITIAL]: null
 };
 
+@RegisterIoElement
 export class RechkoStats extends RechkoPopup {
   static get Style() {
     return /* css */`
@@ -202,5 +203,3 @@ export class RechkoStats extends RechkoPopup {
     ]);
   }
 }
-
-RegisterIoElement(RechkoStats);
