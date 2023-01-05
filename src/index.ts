@@ -1,10 +1,10 @@
 import { IoElement, RegisterIoElement } from 'io-gui';
-import { IoThemeSingleton } from 'io-gui';
 export * from 'io-gui';
 
-import { getWordOfTheDay, allWords } from './words.js';
-import { LetterState } from './types.js';
-import { history } from './history.js';
+import { $CookiesImprovement, $CookiesRequired, $ShowGDPR, $ShowHelp, $ShowSettings, $ShowStats } from './game/state.js';
+
+import { getWordOfTheDay, allWords } from './game/words.js';
+import { gameHistory, LetterState } from './game/game.js';
 
 import './elements/board.js';
 import './elements/keyboard.js';
@@ -14,20 +14,18 @@ import './elements/stats.js';
 import './elements/settings.js';
 import './elements/icons.js';
 
-IoThemeSingleton.theme = JSON.parse(localStorage.getItem('darkTheme') || 'false') ? 'dark' : 'light';
-
 const today = Math.floor((Number(new Date()) + 1000 * 60 * 60 * 2) / (1000 * 60 * 60 * 24));
 // Get word of the day
 const answer = getWordOfTheDay(today);
 // console.log(answer);
 // Board state. Each tile is represented as { letter, state }
-const board = history.load(today) || Array.from({ length: 6 }, () =>
+const board = gameHistory.load(today) || Array.from({ length: 6 }, () =>
 Array.from({ length: 5 }, () => ({
   letter: '',
   state: LetterState.INITIAL
 })));
 
-let allHistory = history.loadAll();
+let allHistory = gameHistory.loadAll();
 
 const replaceLatinKeys = [
   ['q','w','e','r','t','y','u','i','o','p','š','đ','ž','a','s','d','f','g','h','j','k','l','č','ć','x','c','v','b','n','m'],
@@ -38,6 +36,7 @@ const replaceEnglishKeys = [
   ['q','w','e','r','t','y','u','i','o','p','[',']','\\','a','s','d','f','g','h','j','k','l',';','\'','x','c','v','b','n','m'],
   ['љ','њ','е','р','т','з','у','и','о','п','ш','ђ','ж','а','с','д','ф','г','х','ј','к','л','ч','ћ','џ','ц','в','б','н','м']
 ];
+
 
 @RegisterIoElement
 export class RechkoApp extends IoElement {
@@ -61,16 +60,19 @@ export class RechkoApp extends IoElement {
         margin: 4px 0;
         font-size: 36px;
       }
-      :host > header > io-icon {
+      :host > .icons > io-boolicon {
+        display: block;
         position: absolute;
         top: 12px;
+      }
+      :host > .icons > io-boolicon.helpIcon {
         left: 1em;
       }
-      :host > header > io-icon.settingsIcon {
+      :host > .icons > io-boolicon.settingsIcon {
         left: auto;
         right: 1em;
       }
-      :host > header > io-icon.statsIcon {
+      :host > .icons > io-boolicon.statsIcon {
         left: auto;
         right: 4em;
       }
@@ -89,18 +91,6 @@ export class RechkoApp extends IoElement {
       }
       :host > rechko-board {
         flex: 1 1 auto;
-      }
-      :host[colorblindmode] rechko-board .correct {
-        background-color: #f5793a !important;
-      }
-      :host[colorblindmode] rechko-board .present {
-        background-color: #85c0f9 !important;
-      }
-      :host[colorblindmode] rechko-key[state=correct] button {
-        background-color: #f5793a !important;
-      }
-      :host[colorblindmode] rechko-key[state=present] button {
-        background-color: #85c0f9 !important;
       }
       @media (max-width: 310px) {
         :host > header > h1 {
@@ -121,19 +111,10 @@ export class RechkoApp extends IoElement {
       letterStates: Object,
       allowInput: true,
       message: '',
-      showGDPR: JSON.parse(localStorage.getItem('show-gdpr') || 'true'),
-      cookiesRequired: JSON.parse(localStorage.getItem('cookiesRequired') || 'true'),
-      cookiesImprovement: JSON.parse(localStorage.getItem('cookiesImprovement') || 'true'),
-      cookiesAnalitics: JSON.parse(localStorage.getItem('cookiesAnalitics') || 'true'),
-      showHelp: false,
-      showStats: false,
-      showSettings: false,
-      hardMode: JSON.parse(localStorage.getItem('hardMode') || 'false'),
-      darkTheme: JSON.parse(localStorage.getItem('darkTheme') || 'false'),
-      colorblindMode: {
-        value: JSON.parse(localStorage.getItem('colorblindMode') || 'false'),
-        reflect: true
-      }
+      showGDPR: $ShowGDPR,
+      showHelp: $ShowHelp,
+      showStats: $ShowStats,
+      showSettings: $ShowSettings,
     };
   }
   init() {
@@ -204,15 +185,15 @@ export class RechkoApp extends IoElement {
       if (!allWords.includes(guess) && guess !== answer) {
         this.shake();
         this.showMessage('Реч није на листи');
-        if (this.cookiesImprovement) void fetch(`https://analytics.rechko.com/word_nok/${guess}`);
+        if ($CookiesImprovement.value) void fetch(`https://analytics.rechko.com/word_nok/${guess}`);
         return;
       }
-      if (this.cookiesImprovement) void fetch(`https://analytics.rechko.com/word_ok/${guess}`);
+      if ($CookiesImprovement.value) void fetch(`https://analytics.rechko.com/word_ok/${guess}`);
       this.completeGame();
       this.currentRowIndex += 1;
-      if (this.cookiesRequired) {
-        history.save(board, today);
-        allHistory = history.loadAll();
+      if ($CookiesRequired.value) {
+        gameHistory.save(board, today);
+        allHistory = gameHistory.loadAll();
       }
     } else {
       this.shake();
@@ -263,8 +244,8 @@ export class RechkoApp extends IoElement {
         // game win
         this.allowInput = false;
         setTimeout(() => {
-          this.showStats = true;
-        }, 1600);
+          $ShowStats.value = true;
+        }, 500);
         return;
       }
       if (row.every((tile: any) => tile.state !== LetterState.INITIAL)) {
@@ -272,52 +253,13 @@ export class RechkoApp extends IoElement {
           // game over
           this.allowInput = false;
           setTimeout(() => {
-            this.showStats = true;
-          }, 1600);
+            $ShowStats.value = true;
+          }, 500);
           return;
         }
       }
     });
     this.emitUpdate();
-  }
-  onShowGDPR() {
-    this.showGDPR = true;
-  }
-  onHideGDPR() {
-    if (!this.cookiesRequired) {
-      localStorage.clear();
-    }
-    localStorage.setItem('cookiesRequired', String(this.cookiesRequired));
-    localStorage.setItem('cookiesImprovement', String(this.cookiesImprovement));
-    localStorage.setItem('cookiesAnalitics', String(this.cookiesAnalitics));
-    localStorage.setItem('show-gdpr', 'false');
-    try {
-      gtag('consent', 'update', {
-        'analytics_storage': this.cookiesAnalitics ? 'granted' : 'denied',
-        'ad_storage': this.cookiesAnalitics ? 'granted' : 'denied'
-      });
-    } catch(error) {
-      console.warn(error);
-    }
-    this.showGDPR = false;
-  }
-  onShowHelp() {
-    this.showHelp = true;
-  }
-  onHideHelp() {
-    this.showHelp = false;
-  }
-  onShowStats() {
-    this.showStats = true;
-  }
-  onHideStats() {
-    this.showStats = false;
-  }
-  onShowSettings() {
-    this.showSettings = true;
-  }
-  onHideSettings() {
-    this.showSettings = false;
   }
   onMessage(event: CustomEvent) {
     this.showMessage(event.detail.message);
@@ -334,56 +276,35 @@ export class RechkoApp extends IoElement {
     this.shakeRowIndex = this.currentRowIndex;
     setTimeout(() => { this.shakeRowIndex = -1; }, 1000);
   }
-  hardModeChanged() {
-    if (this.cookiesRequired) localStorage.setItem('hardMode', String(this.hardMode));
-  }
-  darkThemeChanged() {
-    if (this.cookiesRequired) localStorage.setItem('darkTheme', String(this.darkTheme));
-    IoThemeSingleton.theme = this.darkTheme ? 'dark' : 'light';
-  }
-  colorblindModeChanged() {
-    if (this.cookiesRequired) localStorage.setItem('colorblindMode', String(this.colorblindMode));
-  }
   currentRowIndexChanged() {
     this.currentRow = this.board[Math.min(5, this.currentRowIndex)];
   }
   changed() {
-    const modalOpen = this.showGDPR || this.showHelp || this.showStats || this.showSettings;
+    const popupOpen = $ShowGDPR.value || $ShowHelp.value || $ShowStats.value || $ShowSettings.value;
     this.template([
-      ['header', {class: 'header'}, [
-        !modalOpen ? ['io-icon', {class:'helpIcon', icon: 'buttons:help', 'on-click': this.onShowHelp}] : null,
-        ['h1', 'РЕЧКО'],
-        (!modalOpen && this.cookiesRequired) ? ['io-icon', {class:'statsIcon', icon: 'buttons:stats', 'on-click': this.onShowStats}] : null,
-        !modalOpen ? ['io-icon', {class:'settingsIcon', icon: 'buttons:settings', 'on-click': this.onShowSettings}] : null,
-      ]],
+      ['header', {class: 'header'}, [['h1', 'РЕЧКО']]],
       ['rechko-board', {class: 'notranslate', board: this.board, shakeRowIndex: this.shakeRowIndex}],
       ['rechko-keyboard', {
         class: 'notranslate',
         letterStates: this.letterStates,
-        'on-key': this.onKeyboard
+        '@key': this.onKeyboard
       }],
-      this.showGDPR ? ['rechko-gdpr', {
-        cookiesRequired: this.bind('cookiesRequired'),
-        cookiesImprovement: this.bind('cookiesImprovement'),
-        cookiesAnalitics: this.bind('cookiesAnalitics'),
-        'on-close': this.onHideGDPR
-      }] : null,
-      this.showHelp ? ['rechko-help', {'on-close': this.onHideHelp}] : null,
-      this.showStats ? ['rechko-stats', {
-        'on-close': this.onHideStats,
-        'on-message': this.onMessage,
+      ['rechko-gdpr', {open: $ShowGDPR}],
+      ['rechko-help', {open: $ShowHelp}],
+      ['rechko-settings', {open: $ShowSettings}],
+      !popupOpen ? ['div', {class: 'icons'}, [
+        ['io-boolicon', {class:'helpIcon', true: 'buttons:help', false: 'buttons:help', value: $ShowHelp}],
+        ['io-boolicon', {class:'statsIcon', true: 'buttons:stats', false: 'buttons:stats', value: $ShowStats}],
+        ['io-boolicon', {class:'settingsIcon', true: 'buttons:settings', false: 'buttons:settings', value: $ShowSettings}],
+      ]] : null,
+      ['rechko-stats', {
+        '@message': this.onMessage,
+        open: $ShowStats,
         answer: answer,
         board: this.board,
         history: allHistory
-      }] : null,
-      this.showSettings ? ['rechko-settings', {
-        'on-close': this.onHideSettings,
-        'on-show-gdpr': this.onShowGDPR,
-        hardMode: this.bind('hardMode'),
-        darkTheme: this.bind('darkTheme'),
-        colorblindMode: this.bind('colorblindMode'),
-      }] : null,
-      this.message ? ['div', {class: 'message'}, this.message] : null
+      }],
+      this.message ? ['div', {class: 'message'}, this.message] : null,
     ]);
   }
 }

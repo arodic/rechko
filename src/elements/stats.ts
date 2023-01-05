@@ -1,8 +1,8 @@
-import {RegisterIoElement} from 'io-gui';
-import {LetterState} from '../types.js';
-import {RechkoPopup} from './popup.js';
+import { RegisterIoElement, Property } from 'io-gui';
+import { LetterState } from '../game/game.js';
+import { RechkoPopup } from './popup.js';
 
-const ICONS = {
+export const ICONS = {
   [LetterState.CORRECT]: '🟩',
   [LetterState.PRESENT]: '🟨',
   [LetterState.ABSENT]: '⬜',
@@ -93,6 +93,10 @@ export class RechkoStats extends RechkoPopup {
       gameStats: [0, 0, 0, 0, 0, 0, 0]
     };
   }
+
+  @Property('Статистика')
+  declare title: string;
+
   historyChanged() {
     let gamesStarted = 0;
     let gamesFinished = 0;
@@ -123,7 +127,7 @@ export class RechkoStats extends RechkoPopup {
       gameStats: gameStats,
     });
   }
-  async onShare() {
+  async onShareClicked() {
     try {
       await navigator.share({
         text: this.shareText
@@ -174,9 +178,10 @@ export class RechkoStats extends RechkoPopup {
     }, -Infinity);
 
     this.template([
+      ['io-icon', {icon: 'icons:close', '@click': this.onCloseClicked}],
+      ['h3', this.title],
       ['h2', {class: 'answer'}, this.message],
       ['div', {class: 'board'}, this.boardGrid],
-      ['h3', 'Статистика'],
       ['div', {class: 'grid'}, [
         ['span', {class: 'count'}, String(this.gamesStarted)],
         ['span', {class: 'count'}, String(this.gamesFinished)],
@@ -195,8 +200,7 @@ export class RechkoStats extends RechkoPopup {
         ['div', [['span', '6'], ['span', {style: {flex: this.gameStats[5] / maxGuess}}, String(this.gameStats[5])]]],
         ['div', [['span', 'x'], ['span', {style: {flex: this.gameStats[6] / maxGuess}}, String(this.gameStats[6])]]],
       ]],
-      ['io-icon', {icon: 'icons:close', 'on-click': this.onClose}],
-      (this.win || this.finish) ? ['button', {'on-click': this.onShare}, [
+      (this.win || this.finish) ? ['button', {'@click': this.onShareClicked}, [
         ['span', 'Подели'],
         ['io-icon', {icon: 'buttons:share'}]
       ]] : null,

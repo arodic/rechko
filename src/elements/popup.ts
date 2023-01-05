@@ -1,14 +1,12 @@
-import {IoElement, RegisterIoElement} from 'io-gui';
+import { IoElement, RegisterIoElement, Property, VDOMArray } from 'io-gui';
 
 @RegisterIoElement
 export class RechkoPopup extends IoElement {
   static get Style() {
     return /* css */`
       :host {
-        display: flex;
         flex-direction: column;
         position: absolute;
-        background: var(--iotBackgroundColor);
         padding: 0 2em;
         top: 3.4em;
         opacity: 0;
@@ -18,9 +16,13 @@ export class RechkoPopup extends IoElement {
         will-change: transform;
         transform: translate3d(0, 200px, 0);
         transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
-        overflow: auto;
+        /* overflow: auto; */
+        background: var(--iotBackgroundColor);
       }
-      :host[show] {
+      :host:not([open]) {
+        display: none;
+      }
+      :host[present] {
         opacity: 1;
         transform: translate3d(0, 0, 0);
       }
@@ -34,36 +36,39 @@ export class RechkoPopup extends IoElement {
       }
       :host > io-icon {
         position: absolute;
+        cursor: pointer;
         top: 1em;
         right: 1em;
+        width: 2.5em;
+        height: 2.5em;
       }
     `;
   }
-  static get Properties(): any {
-    return {
-      show: {
-        value: false,
-        reflect: true
-      }
-    };
+
+  @Property({value: false, reflect: true})
+  declare present: boolean;
+
+  @Property({value: false, reflect: true})
+  declare open: boolean;
+
+  openChanged() {
+    // TODO: use throttle with timeout instead setTimeout with _disposed check!
+    setTimeout(() => {
+      if (this._disposed) return;
+      this.present = this.open;
+    }, 25);
   }
-  connectedCallback() {
-    super.connectedCallback();
-    setTimeout(()=>{
-      this.show = true;
-    });
-  }
-  onClose() {
-    this.show = false;
-    setTimeout(()=>{
-      this.dispatchEvent('close');
+  onCloseClicked() {
+    this.present = false;
+    setTimeout(() => {
+      if (this._disposed) return;
+      this.open = false;
     }, 250);
   }
-
   changed() {
     this.template([
-      ['h3', 'Title'],
-      ['p', 'Paragraph.'],
+      ['io-icon', {icon: 'icons:close', '@click': this.onCloseClicked}],
+      ['h3', this.title]
     ]);
   }
 }

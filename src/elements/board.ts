@@ -1,4 +1,5 @@
 import {IoElement, RegisterIoElement} from 'io-gui';
+import { $ColorblindMode } from '../game/state.js';
 
 @RegisterIoElement
 export class RechkoBoard extends IoElement {
@@ -73,6 +74,18 @@ export class RechkoBoard extends IoElement {
       :host .tile.revealed .back {
         transform: rotateX(0deg);
       }
+      :host[colorblind] .correct {
+        background-color: #f5793a !important;
+      }
+      :host[colorblind] .present {
+        background-color: #85c0f9 !important;
+      }
+      :host[colorblind] rechko-key[state=correct] button {
+        background-color: #f5793a !important;
+      }
+      :host[colorblind] rechko-key[state=present] button {
+        background-color: #85c0f9 !important;
+      }
       @keyframes zoom {
         0% {
           transform: scale(1.1);
@@ -146,6 +159,10 @@ export class RechkoBoard extends IoElement {
       translate: {
         value: 'no',
         reflect: true
+      },
+      colorblind: {
+        binding: $ColorblindMode,
+        reflect: true
       }
     };
   }
@@ -158,8 +175,8 @@ export class RechkoBoard extends IoElement {
     this.template(this.board.map((row: any, i: number) => {
       return ['div', {class: `row ${ this.shakeRowIndex === i && 'shake'}`}, row.map((tile: any, j: number) =>{
         return ['div', {class: `tile ${tile.letter && 'filled'} ${tile.state && 'revealed'}`}, [
-          ['div', {class: 'front', style: {'transition-delay': `${j * 300}ms`}}, tile.letter],
-          ['div', {class: `back ${tile.state}`, style: {'transition-delay': `${j * 300}ms`}}, tile.letter],
+          ['div', {class: 'front', style: {'transiti@delay': `${j * 300}ms`}}, tile.letter],
+          ['div', {class: `back ${tile.state}`, style: {'transiti@delay': `${j * 300}ms`}}, tile.letter],
         ]];
       })];
     }));

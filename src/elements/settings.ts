@@ -1,13 +1,14 @@
-import {RegisterIoElement} from 'io-gui';
-import {RechkoPopup} from './popup.js';
+import { RegisterIoElement, IoThemeSingleton } from 'io-gui';
+import { RechkoPopup } from './popup.js';
+import { $ShowGDPR, $HardMode, $ColorblindMode, $ShowSettings } from '../game/state.js';
 
 @RegisterIoElement
 export class RechkoSettings extends RechkoPopup {
   static get Style() {
     return /* css */`
       :host io-switch {
-         --iotLineHeight: 30px;
-         --iotFieldHeight: 40px;
+        --iotLineHeight: 30px;
+        --iotFieldHeight: 40px;
       }
       :host .option:first-of-type {
         border-top: 1px solid var(--iotBorderColor);
@@ -31,7 +32,7 @@ export class RechkoSettings extends RechkoPopup {
       }
       :host .option > io-button {
         --iotSpacing: 1em;
-         --iotFieldHeight: 3.5em;
+        --iotFieldHeight: 3.5em;
         flex: 1;  
         font-weight: bold;
         color: #ffffff;
@@ -44,19 +45,19 @@ export class RechkoSettings extends RechkoPopup {
   }
   static get Properties() {
     return {
-      hardMode: false,
-      darkTheme: false,
-      colorblindMode: false,
-      cookiesRequired: true,
+      darkTheme: IoThemeSingleton.theme === 'dark',
     };
   }
-  onShowGDPR() {
-    this.dispatchEvent('show-gdpr');
-    this.onClose();
+  showGDPR = () => {
+    this.onCloseClicked();
+    $ShowGDPR.value = true;
+  };
+  darkThemeChanged() {
+    IoThemeSingleton.theme = this.darkTheme ? 'dark' : 'light';
   }
   changed() {
     this.template([
-      ['io-icon', {icon: 'icons:close', 'on-click': this.onClose}],
+      ['io-icon', {icon: 'icons:close', '@click': this.onCloseClicked}],
       ['h3', 'Подешавања'],
       ['div', {class: 'option'}, [
         ['span', 'Тамна тема'],
@@ -64,10 +65,14 @@ export class RechkoSettings extends RechkoPopup {
       ]],
       ['div', {class: 'option'}, [
         ['span', 'Боје високог контраста'],
-        ['io-switch', {value: this.bind('colorblindMode')}],
+        ['io-switch', {value: $ColorblindMode}],
       ]],
       ['div', {class: 'option'}, [
-        ['io-button', {label: 'Подешавање колачића', action: this.onShowGDPR}],
+        ['span', 'Тежи режим игре'],
+        ['io-switch', {value: $HardMode}],
+      ]],
+      ['div', {class: 'option'}, [
+        ['io-button', {label: 'Подешавање колачића', action: this.showGDPR}],
       ]],
 
     ]);

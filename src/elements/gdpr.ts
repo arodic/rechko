@@ -1,4 +1,5 @@
-import {RegisterIoElement} from 'io-gui';
+import { IoStorage, RegisterIoElement } from 'io-gui';
+import { $ShowGDPR, $CookiesRequired, $CookiesImprovement, $CookiesAnalitics } from '../game/state.js';
 import {RechkoPopup} from './popup.js';
 
 @RegisterIoElement
@@ -17,21 +18,22 @@ export class RechkoGdpr extends RechkoPopup {
       }
       :host io-button {
         --iotSpacing: 1em;
-         --iotFieldHeight: 3.5em;
+        --iotFieldHeight: 3.5em;
         flex: 1;  
         font-weight: bold;
         color: #ffffff;
-        background: #6aaa64;
+        background-image: none !important;
+        background-color: #6aaa64;
         border: none;
         border-radius: 4px;
       }
       :host io-button:first-of-type {
-        background: #ee5a34;
+        background-color: #ee5a34;
         margin-right: 1em;
       }
       :host io-switch {
-         --iotLineHeight: 30px;
-         --iotFieldHeight: 40px;
+        --iotLineHeight: 30px;
+        --iotFieldHeight: 40px;
       }
       :host .option:first-of-type {
         border-top: 1px solid var(--iotBorderColor);
@@ -74,37 +76,35 @@ export class RechkoGdpr extends RechkoPopup {
       }
     `;
   }
-  static get Properties(): any {
-    return {
-      cookiesRequired: true,
-      cookiesImprovement: true,
-      cookiesAnalitics: true,
-    };
-  }
   connectedCallback() {
     super.connectedCallback();
-    this.cookiesRequired = true;
     this.$.accept?.focus();
   }
-  onDecline() {
-    // TODO: iogui - this should work!
-    // It appears as if the first change eventt dispatch makes
-    // RechkoApp.changed() reset values for other two.
-    this.setProperties({
-      cookiesRequired: false,
-      cookiesImprovement: false,
-      cookiesAnalitics: false
-    });
-    // this.cookiesRequired = false;
-    // this.cookiesImprovement = false;
-    // this.cookiesAnalitics = false;
-    this.onAccept();
-  }
-  onAccept() {
+  decline = () => {
+    $CookiesRequired.value = false;
+    $CookiesImprovement.value = false;
+    $CookiesAnalitics.value = false;
+    this.onCloseClicked();
     setTimeout(()=> {
-      this.onClose();
+      $ShowGDPR.value = false;
     }, 500);
-  }
+  };
+  accept = () => {
+    $CookiesRequired.value = true;
+    IoStorage.permitted = true;
+    this.onCloseClicked();
+    setTimeout(()=> {
+      $ShowGDPR.value = false;
+    }, 500);
+    // try {
+    //   gtag('consent', 'update', {
+    //     'analytics_storage': this.cookiesAnalitics ? 'granted' : 'denied',
+    //     'ad_storage': this.cookiesAnalitics ? 'granted' : 'denied'
+    //   });
+    // } catch(error) {
+    //   console.warn(error);
+    // }
+  };
   changed() {
     this.template([
       ['h3', 'Ова веб страница користи колачиће'],
@@ -112,19 +112,19 @@ export class RechkoGdpr extends RechkoPopup {
       ['p', 'Страница користи и Google Analytics услуге. Сви подаци се користе искључиво у статистичке сврхе, за побољшање искуства играња и не деле се ни са једном компанијом, друштвом или неком трећом групом.'],
       ['div', {class: 'option'}, [
         ['span', 'Hеопходни колачићи'],
-        ['io-switch', {value: this.bind('cookiesRequired'), disabled: true}],
+        ['io-switch', {value: true, disabled: true}],
       ]],
       ['div', {class: 'option'}, [
         ['span', 'Cакупљање речи'],
-        ['io-switch', {value: this.bind('cookiesImprovement')}],
+        ['io-switch', {value: $CookiesImprovement}],
       ]],
       ['div', {class: 'option'}, [
         ['span', 'Аналитички колачићи'],
-        ['io-switch', {value: this.bind('cookiesAnalitics')}],
+        ['io-switch', {value: $CookiesAnalitics}],
       ]],
       ['div', {class: 'buttons'}, [
-        ['io-button', {label: 'НЕ ПРИХВАТАМ', action: this.onDecline}],
-        ['io-button', {label: 'ПРИХВАТАМ', id: 'accept', action: this.onAccept}],
+        ['io-button', {label: 'НЕ ПРИХВАТАМ', action: this.decline}],
+        ['io-button', {label: 'ПРИХВАТАМ', id: 'accept', action: this.accept}],
       ]]
     ]);
   }

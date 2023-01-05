@@ -1,5 +1,6 @@
 import {RegisterIoElement} from 'io-gui';
-import {LetterState} from '../types.js';
+import {LetterState} from '../game/game.js';
+import { $ShowHelp } from '../game/state.js';
 import {RechkoPopup} from './popup.js';
 
 @RegisterIoElement
@@ -34,7 +35,7 @@ export class RechkoHelp extends RechkoPopup {
   }
   changed() {
     this.template([
-      ['io-icon', {icon: 'icons:close', 'on-click': this.onClose}],
+      ['io-icon', {icon: 'icons:close', '@click': this.onCloseClicked}],
       ['h2', 'Правила игре'],
       ['p', 'Погодите задату реч у 6 покушаја.'],
       ['p', 'Сваки покушај мора бити постојећа реч.'],

@@ -16,4 +16,11 @@ class GameHistory {
   }
 }
 
-export const history = new GameHistory();
+export const gameHistory = new GameHistory();
+
+export const enum LetterState {
+  INITIAL = 0,
+  CORRECT = 'correct',
+  PRESENT = 'present',
+  ABSENT = 'absent'
+}

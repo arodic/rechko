@@ -50,7 +50,7 @@ export class RechkoKey extends IoElement {
         background-color: #c9b458 !important;
       }
       :host[state=absent] button {
-        background-color: var(--iotBackgroundColorDimmed) !important;
+        background-color: var(--iotBackgroundColorStrong) !important;
       }
     `;
   }
@@ -74,7 +74,7 @@ export class RechkoKey extends IoElement {
     this.big = this.key.length > 1;
   }
   changed() {
-    this.template([['button', {'on-click': this.onClick}, [
+    this.template([['button', {'@click': this.onClick}, [
       this.key !== 'Backspace' ?
       ['span', this.key] :
       ['io-icon', {icon: 'buttons:backspace'}]

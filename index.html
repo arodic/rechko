@@ -33,7 +33,9 @@
     <script type="importmap">
       {
         "imports": {
-          "io-gui": "./node_modules/io-gui/build/iogui.js"
+          "io-gui": "./node_modules/io-gui/build/iogui.js",
+          "marked": "./node_modules/io-gui/node_modules/marked/lib/marked.esm.js",
+          "dompurify": "./node_modules/io-gui/node_modules/dompurify/dist/purify.es.js"
         }
       }
     </script>
@@ -63,7 +65,7 @@
         text-align: center;
         max-width: 500px;
         margin: 0 auto;
-        background: var(--io-background-color);
+        background: var(--iotBackgroundColorDimmed);
       }
     </style>
     <script type="module" src="build/index.js"></script>
