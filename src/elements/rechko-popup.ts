@@ -1,4 +1,4 @@
-import { IoElement, RegisterIoElement, Property, VDOMArray } from 'io-gui';
+import { IoElement, RegisterIoElement, Property } from 'io-gui';
 
 @RegisterIoElement
 export class RechkoPopup extends IoElement {

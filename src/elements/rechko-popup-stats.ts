@@ -1,6 +1,6 @@
 import { RegisterIoElement, Property } from 'io-gui';
 import { LetterState } from '../game/game.js';
-import { RechkoPopup } from './popup.js';
+import { RechkoPopup } from './rechko-popup.js';
 
 export const ICONS = {
   [LetterState.CORRECT]: '🟩',
@@ -10,7 +10,7 @@ export const ICONS = {
 };
 
 @RegisterIoElement
-export class RechkoStats extends RechkoPopup {
+export class RechkoPopupStats extends RechkoPopup {
   static get Style() {
     return /* css */`
       :host h4 {

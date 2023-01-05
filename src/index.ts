@@ -8,11 +8,11 @@ import { gameHistory, LetterState } from './game/game.js';
 
 import './elements/board.js';
 import './elements/keyboard.js';
-import './elements/gdpr.js';
-import './elements/help.js';
-import './elements/stats.js';
-import './elements/settings.js';
 import './elements/icons.js';
+import './elements/rechko-popup-gdpr.js';
+import './elements/rechko-popup-help.js';
+import './elements/rechko-popup-settings.js';
+import './elements/rechko-popup-stats.js';
 
 const today = Math.floor((Number(new Date()) + 1000 * 60 * 60 * 2) / (1000 * 60 * 60 * 24));
 // Get word of the day
@@ -289,21 +289,21 @@ export class RechkoApp extends IoElement {
         letterStates: this.letterStates,
         '@key': this.onKeyboard
       }],
-      ['rechko-gdpr', {open: $ShowGDPR}],
-      ['rechko-help', {open: $ShowHelp}],
-      ['rechko-settings', {open: $ShowSettings}],
-      !popupOpen ? ['div', {class: 'icons'}, [
-        ['io-boolicon', {class:'helpIcon', true: 'buttons:help', false: 'buttons:help', value: $ShowHelp}],
-        ['io-boolicon', {class:'statsIcon', true: 'buttons:stats', false: 'buttons:stats', value: $ShowStats}],
-        ['io-boolicon', {class:'settingsIcon', true: 'buttons:settings', false: 'buttons:settings', value: $ShowSettings}],
-      ]] : null,
-      ['rechko-stats', {
+      ['rechko-popup-gdpr', {open: $ShowGDPR}],
+      ['rechko-popup-help', {open: $ShowHelp}],
+      ['rechko-popup-settings', {open: $ShowSettings}],
+      ['rechko-popup-stats', {
         '@message': this.onMessage,
         open: $ShowStats,
         answer: answer,
         board: this.board,
         history: allHistory
       }],
+      !popupOpen ? ['div', {class: 'icons'}, [
+        ['io-boolicon', {class:'helpIcon', true: 'buttons:help', false: 'buttons:help', value: $ShowHelp}],
+        ['io-boolicon', {class:'statsIcon', true: 'buttons:stats', false: 'buttons:stats', value: $ShowStats}],
+        ['io-boolicon', {class:'settingsIcon', true: 'buttons:settings', false: 'buttons:settings', value: $ShowSettings}],
+      ]] : null,
       this.message ? ['div', {class: 'message'}, this.message] : null,
     ]);
   }

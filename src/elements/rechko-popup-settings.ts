@@ -1,9 +1,9 @@
 import { RegisterIoElement, IoThemeSingleton } from 'io-gui';
-import { RechkoPopup } from './popup.js';
-import { $ShowGDPR, $HardMode, $ColorblindMode, $ShowSettings } from '../game/state.js';
+import { RechkoPopup } from './rechko-popup.js';
+import { $ShowGDPR, $HardMode, $ColorblindMode } from '../game/state.js';
 
 @RegisterIoElement
-export class RechkoSettings extends RechkoPopup {
+export class RechkoPopupSettings extends RechkoPopup {
   static get Style() {
     return /* css */`
       :host io-switch {

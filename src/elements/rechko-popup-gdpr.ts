@@ -1,9 +1,9 @@
 import { IoStorage, RegisterIoElement } from 'io-gui';
 import { $ShowGDPR, $CookiesRequired, $CookiesImprovement, $CookiesAnalitics } from '../game/state.js';
-import {RechkoPopup} from './popup.js';
+import {RechkoPopup} from './rechko-popup.js';
 
 @RegisterIoElement
-export class RechkoGdpr extends RechkoPopup {
+export class RechkoPopupGdpr extends RechkoPopup {
   static get Style() {
     return /* css */`
       :host {
@@ -91,7 +91,7 @@ export class RechkoGdpr extends RechkoPopup {
   };
   accept = () => {
     $CookiesRequired.value = true;
-    IoStorage.permitted = true;
+    IoStorage.permit();
     this.onCloseClicked();
     setTimeout(()=> {
       $ShowGDPR.value = false;

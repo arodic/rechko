@@ -1,10 +1,9 @@
-import {RegisterIoElement} from 'io-gui';
-import {LetterState} from '../game/game.js';
-import { $ShowHelp } from '../game/state.js';
-import {RechkoPopup} from './popup.js';
+import { RegisterIoElement } from 'io-gui';
+import { LetterState } from '../game/game.js';
+import { RechkoPopup } from './rechko-popup.js';
 
 @RegisterIoElement
-export class RechkoHelp extends RechkoPopup {
+export class RechkoPopupHelp extends RechkoPopup {
   static get Style() {
     return /* css */`
       :host p {
