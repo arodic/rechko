@@ -1,6 +1,6 @@
 import { RegisterIoElement, IoThemeSingleton, LIGHT_THEME, DARK_THEME, Color } from 'io-gui';
 import { RechkoPopup } from './rechko-popup.js';
-import { $ShowGDPR, $HardMode, $ColorblindMode } from '../game/state.js';
+import { $ShowGDPR, $ColorblindMode } from '../game/state.js';
 
 DARK_THEME.iotBackgroundColorFaint = new Color(0.3, 0.3, 0.3, 1);
 DARK_THEME.iotBackgroundColorStrong = new Color(0.15, 0.15, 0.15, 1);
@@ -75,10 +75,10 @@ export class RechkoPopupSettings extends RechkoPopup {
         ['span', 'Боје високог контраста'],
         ['io-switch', {value: $ColorblindMode}],
       ]],
-      ['div', {class: 'option'}, [
-        ['span', 'Тежи режим игре'],
-        ['io-switch', {value: $HardMode}],
-      ]],
+      // ['div', {class: 'option'}, [
+      //   ['span', 'Тежи режим игре'],
+      //   ['io-switch', {value: $HardMode}],
+      // ]],
       ['div', {class: 'option'}, [
         ['io-button', {label: 'Подешавање колачића', action: this.showGDPR}],
       ]],

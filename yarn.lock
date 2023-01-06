@@ -791,10 +791,10 @@ inherits@2:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-io-gui@1.4.0-rc5:
-  version "1.4.0-rc5"
-  resolved "https://registry.yarnpkg.com/io-gui/-/io-gui-1.4.0-rc5.tgz#5be8e7dd3829722349ad73a32b13bc3dd6ac66c1"
-  integrity sha512-2zqGZ0FZimywki1hVZTSRbKPbZ291ULS7h8eUdJ4CpTj+RREFb/wC9zQvO66eNXLOTMSt3VrB46DZAxvICafHA==
+io-gui@1.4.0-rc6:
+  version "1.4.0-rc6"
+  resolved "https://registry.yarnpkg.com/io-gui/-/io-gui-1.4.0-rc6.tgz#f69383c75cbe90712f2bb86afb2bc05a8850cf85"
+  integrity sha512-9dXBTpygirq23HUb47O1b8T97O7t3peN9YUJ1lILDXWmXRP90QTMWBtyluOvahyhOMu9mFXo/B8C19yFxE3xHQ==
 
 is-builtin-module@^3.2.0:
   version "3.2.0"
