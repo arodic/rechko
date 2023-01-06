@@ -1,4 +1,5 @@
 import {IoElement, RegisterIoElement} from 'io-gui';
+import { $ColorblindMode } from '../game/state.js';
 import './key.js';
 
 const rows = [
@@ -23,6 +24,12 @@ export class RechkoKeyboard extends IoElement {
         margin: 0 auto 3px;
         touch-action: manipulation;
       }
+      :host[colorblind] rechko-key[state=correct] button {
+        background-color: #f5793a !important;
+      }
+      :host[colorblind] rechko-key[state=present] button {
+        background-color: #85c0f9 !important;
+      }
       @media (max-width: 360px) {
         :host {
           margin: 0.25em 0.25em 0.25em 0.25em;
@@ -38,6 +45,10 @@ export class RechkoKeyboard extends IoElement {
       },
       translate: {
         value: 'no',
+        reflect: true
+      },
+      colorblind: {
+        binding: $ColorblindMode,
         reflect: true
       }
     };

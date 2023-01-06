@@ -80,12 +80,6 @@ export class RechkoBoard extends IoElement {
       :host[colorblind] .present {
         background-color: #85c0f9 !important;
       }
-      :host[colorblind] rechko-key[state=correct] button {
-        background-color: #f5793a !important;
-      }
-      :host[colorblind] rechko-key[state=present] button {
-        background-color: #85c0f9 !important;
-      }
       @keyframes zoom {
         0% {
           transform: scale(1.1);
