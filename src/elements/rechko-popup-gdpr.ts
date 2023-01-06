@@ -96,14 +96,14 @@ export class RechkoPopupGdpr extends RechkoPopup {
     setTimeout(()=> {
       $ShowGDPR.value = false;
     }, 500);
-    // try {
-    //   gtag('consent', 'update', {
-    //     'analytics_storage': this.cookiesAnalitics ? 'granted' : 'denied',
-    //     'ad_storage': this.cookiesAnalitics ? 'granted' : 'denied'
-    //   });
-    // } catch(error) {
-    //   console.warn(error);
-    // }
+    try {
+      gtag('consent', 'update', {
+        'analytics_storage': this.cookiesAnalitics ? 'granted' : 'denied',
+        'ad_storage': this.cookiesAnalitics ? 'granted' : 'denied'
+      });
+    } catch(error) {
+      console.warn(error);
+    }
   };
   changed() {
     this.template([

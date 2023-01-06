@@ -1,4 +1,4 @@
-import {IoElement, RegisterIoElement} from 'io-gui';
+import { IoElement, RegisterIoElement } from 'io-gui';
 import { $ColorblindMode } from '../game/state.js';
 
 @RegisterIoElement

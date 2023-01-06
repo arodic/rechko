@@ -7,27 +7,20 @@ export class RechkoPopupHelp extends RechkoPopup {
   static get Style() {
     return /* css */`
       :host p {
-        font-size: 1.0rem;
-        line-height: 1.2em;
+        font-size: 0.95rem;
+        line-height: 1em;
         margin: 0.25em 0;
       }
-      :host p:last-of-type {
-        font-weight: bold;
-        border-top: 1px solid #ccc;
-        margin-top: 2.5em;
-        margin-bottom: 2.5em;
-        padding-top: 1.5em;
-      }
       :host rechko-board {
-        flex: 1 0 auto;
         --tile-size: 64px !important;
+        margin: 0;
         margin-top: 1em;
       }
       @media (max-width: 400px) {
         :host rechko-board {
+          margin-top: 0.5em;
           --tile-size: 42px !important;
-          margin-top: 1em;
-          height: 42px;
+          height: 40px;
         }
       }
     `;

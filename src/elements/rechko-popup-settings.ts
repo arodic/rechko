@@ -1,6 +1,14 @@
-import { RegisterIoElement, IoThemeSingleton } from 'io-gui';
+import { RegisterIoElement, IoThemeSingleton, LIGHT_THEME, DARK_THEME, Color } from 'io-gui';
 import { RechkoPopup } from './rechko-popup.js';
 import { $ShowGDPR, $HardMode, $ColorblindMode } from '../game/state.js';
+
+DARK_THEME.iotBackgroundColorFaint = new Color(0.3, 0.3, 0.3, 1);
+DARK_THEME.iotBackgroundColorStrong = new Color(0.15, 0.15, 0.15, 1);
+
+IoThemeSingleton.registerTheme('light', LIGHT_THEME);
+IoThemeSingleton.registerTheme('dark', DARK_THEME);
+IoThemeSingleton.themeIDChanged();
+IoThemeSingleton.changed();
 
 @RegisterIoElement
 export class RechkoPopupSettings extends RechkoPopup {
@@ -32,20 +40,20 @@ export class RechkoPopupSettings extends RechkoPopup {
       }
       :host .option > io-button {
         --iotSpacing: 1em;
-        --iotFieldHeight: 3.5em;
+        --iotFontSize: 1em;
+        --iotFieldHeight: 3.1em;
         flex: 1;  
         font-weight: bold;
-        color: #ffffff;
-        background: var(--iotBackgroundColorDimmed);
+        justify-content: center;
         border: none;
-        margin-top: 0.5em;
+        margin-top: 2em;
         border-radius: 4px;
       }
     `;
   }
   static get Properties() {
     return {
-      darkTheme: IoThemeSingleton.theme === 'dark',
+      darkTheme: IoThemeSingleton.themeID === 'dark',
     };
   }
   showGDPR = () => {
@@ -53,7 +61,7 @@ export class RechkoPopupSettings extends RechkoPopup {
     $ShowGDPR.value = true;
   };
   darkThemeChanged() {
-    IoThemeSingleton.theme = this.darkTheme ? 'dark' : 'light';
+    IoThemeSingleton.themeID = this.darkTheme ? 'dark' : 'light';
   }
   changed() {
     this.template([

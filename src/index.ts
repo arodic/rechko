@@ -289,6 +289,11 @@ export class RechkoApp extends IoElement {
         letterStates: this.letterStates,
         '@key': this.onKeyboard
       }],
+      !popupOpen ? ['div', {class: 'icons'}, [
+        ['io-boolicon', {class:'helpIcon', true: 'buttons:help', false: 'buttons:help', value: $ShowHelp}],
+        ['io-boolicon', {class:'statsIcon', true: 'buttons:stats', false: 'buttons:stats', value: $ShowStats}],
+        ['io-boolicon', {class:'settingsIcon', true: 'buttons:settings', false: 'buttons:settings', value: $ShowSettings}],
+      ]] : null,
       ['rechko-popup-gdpr', {open: $ShowGDPR}],
       ['rechko-popup-help', {open: $ShowHelp}],
       ['rechko-popup-settings', {open: $ShowSettings}],
@@ -299,11 +304,6 @@ export class RechkoApp extends IoElement {
         board: this.board,
         history: allHistory
       }],
-      !popupOpen ? ['div', {class: 'icons'}, [
-        ['io-boolicon', {class:'helpIcon', true: 'buttons:help', false: 'buttons:help', value: $ShowHelp}],
-        ['io-boolicon', {class:'statsIcon', true: 'buttons:stats', false: 'buttons:stats', value: $ShowStats}],
-        ['io-boolicon', {class:'settingsIcon', true: 'buttons:settings', false: 'buttons:settings', value: $ShowSettings}],
-      ]] : null,
       this.message ? ['div', {class: 'message'}, this.message] : null,
     ]);
   }

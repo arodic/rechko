@@ -19,7 +19,7 @@ export class RechkoKey extends IoElement {
         padding: 0;
         cursor: pointer;
         user-select: none;
-        background-color: var(--iotBackgroundColorDimmed);
+        background-color: var(--iotBackgroundColorFaint);
         color: var(--iotColor);
         flex: 1;
         display: flex;

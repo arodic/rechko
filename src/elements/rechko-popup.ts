@@ -52,19 +52,18 @@ export class RechkoPopup extends IoElement {
   declare open: boolean;
 
   openChanged() {
-    // TODO: use throttle with timeout instead setTimeout with _disposed check!
-    setTimeout(() => {
-      if (this._disposed) return;
+    this.throttle(() => {
       this.present = this.open;
-    }, 25);
+    });
   }
+
   onCloseClicked() {
     this.present = false;
-    setTimeout(() => {
-      if (this._disposed) return;
+    this.throttle(() => {
       this.open = false;
-    }, 250);
+    }, undefined, 250);
   }
+
   changed() {
     this.template([
       ['io-icon', {icon: 'icons:close', '@click': this.onCloseClicked}],
