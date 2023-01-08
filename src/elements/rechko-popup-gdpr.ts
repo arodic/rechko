@@ -26,6 +26,8 @@ export class RechkoPopupGdpr extends RechkoPopup {
         background-color: #6aaa64;
         border: none;
         border-radius: 4px;
+        text-align: center;
+      justify-content: center;
       }
       :host io-button:first-of-type {
         background-color: #ee5a34;
@@ -57,21 +59,18 @@ export class RechkoPopupGdpr extends RechkoPopup {
       }
       @media (max-width: 500px) {
         :host p {
-          margin: 0.5em 0;
+          font-size: 0.9em;
         }
-        :host io-button {
-          font-size: 0.7em;
-          line-height: 1.4em;
+        :host io-button io-label {
+          font-size: 0.8em;
         }
       }
       @media (max-width: 360px) {
-        :host io-button {
-          font-size: 0.6em;
-          line-height: 1.6em;
-        }
-        :host .option span {
+        :host .option > span {
           font-size: 0.7em;
-          line-height: 4em;
+        }
+        :host io-button io-label {
+          font-size: 0.6em;
         }
       }
     `;
