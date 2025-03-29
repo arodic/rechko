@@ -17,6 +17,7 @@ import './elements/rechko-popup-stats.js';
 const today = Math.floor((Number(new Date()) + 1000 * 60 * 60 * 2) / (1000 * 60 * 60 * 24));
 // Get word of the day
 const answer = getWordOfTheDay(today - 242);
+// console.log('Answer:', answer);
 // Board state. Each tile is represented as { letter, state }
 const board = gameHistory.load(today) || Array.from({ length: 6 }, () =>
 Array.from({ length: 5 }, () => ({
