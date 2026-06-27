@@ -16,7 +16,10 @@
     "/manifest.json",
     "/index.html"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "**/icons.ts",
+    "**/icons.js"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "pnpm clean && tsc",
