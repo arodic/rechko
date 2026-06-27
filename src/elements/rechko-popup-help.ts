@@ -1,8 +1,10 @@
-import { RegisterIoElement } from 'io-gui';
-import { LetterState } from '../game/game.js';
-import { RechkoPopup } from './rechko-popup.js';
+import { Register, h2, p } from '@io-gui/core'
+import { ioIcon } from '@io-gui/icons'
+import { LetterState } from '../game/game.js'
+import { RechkoPopup, RechkoPopupProps } from './rechko-popup.js'
+import { rechkoBoard } from './board.js'
 
-@RegisterIoElement
+@Register
 export class RechkoPopupHelp extends RechkoPopup {
   static get Style() {
     return /* css */`
@@ -23,42 +25,49 @@ export class RechkoPopupHelp extends RechkoPopup {
           height: 40px;
         }
       }
-    `;
+    `
   }
-  changed() {
-    this.template([
-      ['io-icon', {icon: 'icons:close', '@click': this.onCloseClicked}],
-      ['h2', 'Правила игре'],
-      ['p', 'Погодите задату реч у 6 покушаја.'],
-      ['p', 'Сваки покушај мора бити постојећа реч.'],
-      ['p', 'Притисните ENTER да унесете реч.'],
-      ['p', 'Погођена слова биће обележена бојама.'],
-      ['h2', 'Примери:'],
-      ['rechko-board', {class: 'notranslate', board: [[
+  ready() {
+    this.mutated()
+  }
+  mutated() {
+    this.render([
+      ioIcon({value: 'io:close', '@click': this.onCloseClicked}),
+      h2('Правила игре'),
+      p('Погодите задату реч у 6 покушаја.'),
+      p('Сваки покушај мора бити постојећа реч.'),
+      p('Притисните ENTER да унесете реч.'),
+      p('Погођена слова биће обележена бојама.'),
+      h2('Примери:'),
+      rechkoBoard({class: 'notranslate', board: [[
         {letter: 'с', state: 0},
         {letter: 'л', state: LetterState.CORRECT},
         {letter: 'о', state: 0},
         {letter: 'г', state: 0},
         {letter: 'а', state: 0},
-      ]]}],
-      ['p', 'Слово Л је погођено на тачном месту.'],
-      ['rechko-board', {class: 'notranslate', board: [[
+      ]]}),
+      p('Слово Л је погођено на тачном месту.'),
+      rechkoBoard({class: 'notranslate', board: [[
         {letter: 'н', state: 0},
         {letter: 'а', state: 0},
         {letter: 'м', state: 0},
         {letter: 'а', state: 0},
         {letter: 'з', state: LetterState.PRESENT},
-      ]]}],
-      ['p', 'Слово З је погођено али на погрешном месту.'],
-      ['rechko-board', {class: 'notranslate', board: [[
+      ]]}),
+      p('Слово З је погођено али на погрешном месту.'),
+      rechkoBoard({class: 'notranslate', board: [[
         {letter: 'д', state: 0},
         {letter: 'о', state: LetterState.ABSENT},
         {letter: 'д', state: 0},
         {letter: 'и', state: 0},
         {letter: 'р', state: 0},
-      ]]}],
-      ['p', 'Слово О не постоји у задатој речи.'],
-      ['p', 'Задата реч се мења сваког дана.'],
-    ]);
+      ]]}),
+      p('Слово О не постоји у задатој речи.'),
+      p('Задата реч се мења сваког дана.'),
+    ])
   }
+}
+
+export const rechkoPopupHelp = function(arg0?: RechkoPopupProps) {
+  return RechkoPopupHelp.vConstructor(arg0)
 }

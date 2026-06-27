@@ -1,40 +1,53 @@
 {
   "name": "rechko_io",
   "version": "1.0.0",
-  "description": "rechko igra",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib"
-  },
   "type": "module",
+  "packageManager": "pnpm@10.26.1",
+  "description": "rechko igra",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "/src/",
+    "/dist/",
+    "/images/",
+    "/CNAME",
+    "/robots.txt",
+    "/manifest.json",
+    "/index.html"
+  ],
+  "sideEffects": false,
   "scripts": {
-    "clean": "rm -rf build && rm -rf bundle",
-    "lint": "eslint src --fix",
-    "build": "yarn clean && yarn lint && tsc && rollup -c && rm -rf build && mv bundle build",
-    "dev": "yarn clean && yarn lint && tsc -w"
+    "dev": "vite",
+    "build": "pnpm clean && tsc",
+    "bundle": "pnpm lint && pnpm build && node bundle.js",
+    "lint": "eslint . --fix",
+    "clean": "rm -rf build && rm -rf bundle"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/arodic/rechko.git"
   },
-  "author": "",
+  "author": "Aki Rodic",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/arodic/rechko/issues"
   },
-  "homepage": "https://github.com/arodic/rechko#readme",
+  "homepage": "https://rechko.com",
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@eslint/js": "^9.39.2",
+    "@io-gui/core": "2.0.0-alpha.3",
+    "@io-gui/icons": "2.0.0-alpha.3",
+    "@io-gui/inputs": "2.0.0-alpha.3",
+    "@rollup/plugin-strip": "^3.0.4",
+    "@stylistic/eslint-plugin": "^5.6.1",
     "@types/gtag.js": "^0.0.8",
-    "@typescript-eslint/eslint-plugin": "^5.45.0",
-    "@typescript-eslint/parser": "^5.45.0",
-    "eslint": "^8.28.0",
-    "eslint-plugin-html": "^7.1.0",
-    "io-gui": "1.4.0-rc6",
-    "rollup": "^3.5.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "tslib": "^2.4.1",
-    "typescript": "^4.9.3"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+    "@types/node": "^25.0.3",
+    "eslint": "9.39.2",
+    "terser": "^5.44.1",
+    "tslib": "^2.8.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.50.0",
+    "vite": "^7.3.0"
+  }
 }

@@ -1,7 +1,13 @@
-import {IoElement, RegisterIoElement} from 'io-gui';
+import { ReactiveElement, ReactiveElementProps, Register, span, button } from '@io-gui/core'
+import { ioIcon } from '@io-gui/icons'
 
-@RegisterIoElement
-export class RechkoKey extends IoElement {
+export type RechkoKeyProps = ReactiveElementProps & {
+  key?: string
+  state?: string
+}
+
+@Register
+export class RechkoKey extends ReactiveElement {
   static get Style() {
     return /* css */`
       :host {
@@ -19,8 +25,8 @@ export class RechkoKey extends IoElement {
         padding: 0;
         cursor: pointer;
         user-select: none;
-        background-color: var(--iotBackgroundColorFaint);
-        color: var(--iotColor);
+        background-color: var(--io_bgColorLight);
+        color: var(--io_color);
         flex: 1;
         display: flex;
         justify-content: center;
@@ -30,7 +36,7 @@ export class RechkoKey extends IoElement {
       }
       :host io-icon {
         margin: auto;
-        fill: var(--iotColor);
+        fill: var(--io_color);
       }
       :host[big] {
         flex: 3;
@@ -50,9 +56,9 @@ export class RechkoKey extends IoElement {
         background-color: #c9b458 !important;
       }
       :host[state=absent] button {
-        background-color: var(--iotBackgroundColorStrong) !important;
+        background-color: var(--io_colorLight) !important;
       }
-    `;
+    `
   }
   static get Properties(): any {
     return {
@@ -65,19 +71,29 @@ export class RechkoKey extends IoElement {
         value: '',
         reflect: true,
       }
-    };
+    }
   }
+  declare key: string
+  declare big: boolean
+  declare state: string
   onClick() {
-    this.dispatchEvent('key', this.key, true);
+    this.dispatch('key', this.key, true)
   }
   keyChanged() {
-    this.big = this.key.length > 1;
+    this.big = this.key.length > 1
   }
-  changed() {
-    this.template([['button', {'@click': this.onClick}, [
+  ready() {
+    this.mutated()
+  }
+  mutated() {
+    this.render([button({'@click': this.onClick}, [
       this.key !== 'Backspace' ?
-      ['span', this.key] :
-      ['io-icon', {icon: 'buttons:backspace'}]
-    ]]]);
+      span(this.key) :
+      ioIcon({value: 'buttons:backspace'})
+    ])])
   }
+}
+
+export const rechkoKey = function(arg0?: RechkoKeyProps) {
+  return RechkoKey.vConstructor(arg0)
 }

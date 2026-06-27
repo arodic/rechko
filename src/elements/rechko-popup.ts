@@ -1,7 +1,12 @@
-import { IoElement, RegisterIoElement, Property } from 'io-gui';
+import { ReactiveElement, ReactiveElementProps, Register, Property, WithBinding } from '@io-gui/core'
+import { ioIcon } from '@io-gui/icons'
 
-@RegisterIoElement
-export class RechkoPopup extends IoElement {
+export type RechkoPopupProps = ReactiveElementProps & {
+  open?: WithBinding<boolean>
+}
+
+@Register
+export class RechkoPopup extends ReactiveElement {
   static get Style() {
     return /* css */`
       :host {
@@ -17,7 +22,7 @@ export class RechkoPopup extends IoElement {
         transform: translate3d(0, 200px, 0);
         transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
         overflow: auto;
-        background: var(--iotBackgroundColor);
+        background: var(--io_bgColor);
       }
       :host:not([open]) {
         display: none;
@@ -42,32 +47,31 @@ export class RechkoPopup extends IoElement {
         width: 2.5em;
         height: 2.5em;
       }
-    `;
+    `
   }
 
   @Property({value: false, reflect: true})
-  declare present: boolean;
+  declare present: boolean
 
   @Property({value: false, reflect: true})
-  declare open: boolean;
+  declare open: boolean
 
   openChanged() {
-    this.throttle(() => {
-      this.present = this.open;
-    });
+    this.debounce(() => {
+      this.present = this.open
+    })
   }
 
   onCloseClicked() {
-    this.present = false;
-    this.throttle(() => {
-      this.open = false;
-    }, undefined, 250);
+    this.present = false
+    setTimeout(() => {
+      this.open = false
+    }, 250)
   }
 
-  changed() {
-    this.template([
-      ['io-icon', {icon: 'icons:close', '@click': this.onCloseClicked}],
-      ['h3', this.title]
-    ]);
+  mutated() {
+    this.render([
+      ioIcon({value: 'io:close', '@click': this.onCloseClicked}),
+    ])
   }
 }

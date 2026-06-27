@@ -1,8 +1,13 @@
-import { IoElement, RegisterIoElement } from 'io-gui';
-import { $ColorblindMode } from '../game/state.js';
+import { ReactiveElement, ReactiveElementProps, Register, div } from '@io-gui/core'
+import { $ColorblindMode } from '../game/state.js'
 
-@RegisterIoElement
-export class RechkoBoard extends IoElement {
+export type RechkoBoardProps = ReactiveElementProps & {
+  board?: any[][]
+  shakeRowIndex?: number
+}
+
+@Register
+export class RechkoBoard extends ReactiveElement {
   static get Style() {
     return /* css */`
       :host {
@@ -24,7 +29,7 @@ export class RechkoBoard extends IoElement {
         background-color: #c9b458 !important;
       }
       :host .absent {
-        background-color: var(--iotBackgroundColorStrong) !important;
+        background-color: var(--io_colorLight) !important;
       }
       :host .row {
         display: flex;
@@ -63,7 +68,7 @@ export class RechkoBoard extends IoElement {
         -webkit-backface-visibility: hidden;
       }
       :host .tile .front {
-        border: 1px solid var(--iotBorderColor);
+        border: 1px solid var(--io_borderColor);
       }
       :host .tile .back {
         transform: rotateX(180deg);
@@ -141,38 +146,47 @@ export class RechkoBoard extends IoElement {
           width: calc(var(--tile-size) - 1.2px);
         }
       }
-    `;
+    `
   }
   static get Properties(): any {
     return {
       board: {
-        value: [],
-        observe: true,
+        type: Array,
+        init: null,
       },
       shakeRowIndex: -1,
-      translate: {
-        value: 'no',
-        reflect: true
-      },
       colorblind: {
         binding: $ColorblindMode,
         reflect: true
       }
-    };
+    }
   }
+  declare board: any[][]
+  declare shakeRowIndex: number
+  declare colorblind: boolean
   onResized() {
-    const rect = this.getBoundingClientRect();
-    const size = Math.min(rect.width, rect.height*5/6) / 5;
-    this.style.setProperty('--tile-size', size + 'px');
+    const rect = this.getBoundingClientRect()
+    const size = Math.min(rect.width, rect.height * 5 / 6) / 5
+    this.style.setProperty('--tile-size', size + 'px')
   }
-  changed() {
-    this.template(this.board.map((row: any, i: number) => {
-      return ['div', {class: `row ${ this.shakeRowIndex === i && 'shake'}`}, row.map((tile: any, j: number) =>{
-        return ['div', {class: `tile ${tile.letter && 'filled'} ${tile.state && 'revealed'}`}, [
-          ['div', {class: 'front', style: {'transiti@delay': `${j * 300}ms`}}, tile.letter],
-          ['div', {class: `back ${tile.state}`, style: {'transiti@delay': `${j * 300}ms`}}, tile.letter],
-        ]];
-      })];
-    }));
+  boardMutated() {
+    this.mutated()
   }
+  ready() {
+    this.mutated()
+  }
+  mutated() {
+    this.render(this.board.map((row: any, i: number) => {
+      return div({class: `row ${ this.shakeRowIndex === i ? 'shake' : ''}`}, row.map((tile: any, j: number) => {
+        return div({class: `tile ${tile.letter ? 'filled' : ''} ${tile.state ? 'revealed' : ''}`}, [
+          div({class: 'front', style: {'transition-delay': `${j * 300}ms`}}, tile.letter),
+          div({class: `back ${tile.state}`, style: {'transition-delay': `${j * 300}ms`}}, tile.letter),
+        ])
+      }))
+    }))
+  }
+}
+
+export const rechkoBoard = function(arg0?: RechkoBoardProps) {
+  return RechkoBoard.vConstructor(arg0)
 }

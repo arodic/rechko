@@ -1,15 +1,22 @@
-import { RegisterIoElement, Property } from 'io-gui';
-import { LetterState } from '../game/game.js';
-import { RechkoPopup } from './rechko-popup.js';
+import { Register, h2, h3, h4, div, span, button } from '@io-gui/core'
+import { ioIcon } from '@io-gui/icons'
+import { LetterState } from '../game/game.js'
+import { RechkoPopup, RechkoPopupProps } from './rechko-popup.js'
+
+export type RechkoPopupStatsProps = RechkoPopupProps & {
+  answer?: string
+  board?: any[][]
+  history?: Record<string, any[][]>
+}
 
 export const ICONS = {
   [LetterState.CORRECT]: '🟩',
   [LetterState.PRESENT]: '🟨',
   [LetterState.ABSENT]: '⬜',
   [LetterState.INITIAL]: null
-};
+}
 
-@RegisterIoElement
+@Register
 export class RechkoPopupStats extends RechkoPopup {
   static get Style() {
     return /* css */`
@@ -72,9 +79,9 @@ export class RechkoPopupStats extends RechkoPopup {
         margin-left: 0.5em;
         margin-bottom: -0.5em;
       }
-    `;
+    `
   }
-  static get Properties() {
+  static get Properties(): any {
     return {
       message: '',
       answer: '',
@@ -83,41 +90,50 @@ export class RechkoPopupStats extends RechkoPopup {
       boardGrid: '',
       shareText: '',
       board: {
-        value: [],
-        observe: true
+        type: Array,
+        init: null
       },
       history: Object,
       gamesStarted: 0,
       gamesFinished: 0,
       gamesWon: 0,
       gameStats: [0, 0, 0, 0, 0, 0, 0]
-    };
+    }
   }
-
-  @Property('Статистика')
-  declare title: string;
+  declare message: string
+  declare answer: string
+  declare win: boolean
+  declare finish: boolean
+  declare boardGrid: string
+  declare shareText: string
+  declare board: any[][]
+  declare history: Record<string, any[][]>
+  declare gamesStarted: number
+  declare gamesFinished: number
+  declare gamesWon: number
+  declare gameStats: number[]
 
   historyChanged() {
-    let gamesStarted = 0;
-    let gamesFinished = 0;
-    let gamesWon = 0;
-    const gameStats = [0, 0, 0, 0, 0, 0, 0];
+    let gamesStarted = 0
+    let gamesFinished = 0
+    let gamesWon = 0
+    const gameStats = [0, 0, 0, 0, 0, 0, 0]
     for (const day in this.history) {
-      const game = this.history[day];
+      const game = this.history[day]
       if (game[0].every((tile: any) => tile.state !== LetterState.INITIAL)) {
-        gamesStarted++;
+        gamesStarted++
       }
       game.forEach((row: any, i: number) => {
         if (row.every((tile: any) => tile.state === LetterState.CORRECT)) {
-          gameStats[i]++;
-          gamesWon++;
-          gamesFinished++;
-          return;
+          gameStats[i]++
+          gamesWon++
+          gamesFinished++
+          return
         }
-      });
+      })
       if (game[5].every((tile: any) => (tile.state !== LetterState.CORRECT && tile.state !== LetterState.INITIAL))) {
-        gamesFinished++;
-        gameStats[6]++;
+        gamesFinished++
+        gameStats[6]++
       }
     }
     this.setProperties({
@@ -125,85 +141,92 @@ export class RechkoPopupStats extends RechkoPopup {
       gamesFinished: gamesFinished,
       gamesWon: gamesWon,
       gameStats: gameStats,
-    });
+    })
   }
   async onShareClicked() {
     try {
       await navigator.share({
         text: this.shareText
-      });
-    } catch(err) {
-      void navigator.clipboard.writeText(this.shareText);
-      this.dispatchEvent('message', {message: 'Резултат копиран'});
+      })
+    } catch (err) {
+      void navigator.clipboard.writeText(this.shareText)
+      this.dispatch('message', {message: 'Резултат копиран'})
     }
 
   }
   boardChanged() {
-    this.boardMutated();
+    this.boardMutated()
   }
   boardMutated() {
-    const dateObj = new Date();
-    const month = dateObj.getUTCMonth() + 1;
-    const day = dateObj.getUTCDate();
-    const year = dateObj.getUTCFullYear();
+    const dateObj = new Date()
+    const month = dateObj.getUTCMonth() + 1
+    const day = dateObj.getUTCDate()
+    const year = dateObj.getUTCFullYear()
 
-    let lastIndex = -1;
-    this.win = false;
-    this.finish = false;
+    let lastIndex = -1
+    this.win = false
+    this.finish = false
     this.board.forEach((row: any) => {
       if (row.every((tile: any) => tile.state !== LetterState.INITIAL)) {
-        lastIndex++;
+        lastIndex++
       }
       if (row.every((tile: any) => tile.state === LetterState.CORRECT)) {
-        this.win = true;
+        this.win = true
       }
-    });
+    })
     if (this.board[5].every((tile: any) => (tile.state !== LetterState.INITIAL))) {
-      this.finish = true;
+      this.finish = true
     }
 
-    this.message = this.win ? ['Генијално!', 'Величанствено!', 'Импресивно!', 'Одлично!', 'Браво!', 'Није лоше!'][lastIndex] : this.finish ? this.answer : '';
+    this.message = this.win ? ['Генијално!', 'Величанствено!', 'Импресивно!', 'Одлично!', 'Браво!', 'Није лоше!'][lastIndex] : this.finish ? this.answer : ''
 
     this.boardGrid = this.board
       .slice(0, lastIndex + 1)
       .map((row: any) => {
-        return row.map((tile: any) => (ICONS as any)[tile.state]).join('');
+        return row.map((tile: any) => (ICONS as any)[tile.state]).join('')
       })
-      .join('\n');
-    this.shareText = `rechko.com\n${day}/${month}/${year}\n${this.boardGrid}`;
+      .join('\n')
+    this.shareText = `rechko.com\n${day}/${month}/${year}\n${this.boardGrid}`
   }
-  changed() {
+  ready() {
+    this.mutated()
+  }
+  mutated() {
     const maxGuess = this.gameStats.reduce(function(a: number, b: number) {
-      return Math.max(a, b);
-    }, -Infinity);
+      return Math.max(a, b)
+    }, -Infinity)
 
-    this.template([
-      ['io-icon', {icon: 'icons:close', '@click': this.onCloseClicked}],
-      ['h3', this.title],
-      ['h2', {class: 'answer'}, this.message],
-      ['div', {class: 'board'}, this.boardGrid],
-      ['div', {class: 'grid'}, [
-        ['span', {class: 'count'}, String(this.gamesStarted)],
-        ['span', {class: 'count'}, String(this.gamesFinished)],
-        ['span', {class: 'count'}, String(this.gamesWon)],
-        ['span', 'започетих'],
-        ['span', 'одиграних'],
-        ['span', 'решених'],
-      ]],
-      ['h4', 'Дистрибуција погодака:'],
-      ['div', {class: 'distribution'}, [
-        ['div', [['span', '1'], ['span', {style: {flex: this.gameStats[0] / maxGuess}}, String(this.gameStats[0])]]],
-        ['div', [['span', '2'], ['span', {style: {flex: this.gameStats[1] / maxGuess}}, String(this.gameStats[1])]]],
-        ['div', [['span', '3'], ['span', {style: {flex: this.gameStats[2] / maxGuess}}, String(this.gameStats[2])]]],
-        ['div', [['span', '4'], ['span', {style: {flex: this.gameStats[3] / maxGuess}}, String(this.gameStats[3])]]],
-        ['div', [['span', '5'], ['span', {style: {flex: this.gameStats[4] / maxGuess}}, String(this.gameStats[4])]]],
-        ['div', [['span', '6'], ['span', {style: {flex: this.gameStats[5] / maxGuess}}, String(this.gameStats[5])]]],
-        ['div', [['span', 'x'], ['span', {style: {flex: this.gameStats[6] / maxGuess}}, String(this.gameStats[6])]]],
-      ]],
-      (this.win || this.finish) ? ['button', {'@click': this.onShareClicked}, [
-        ['span', 'Подели'],
-        ['io-icon', {icon: 'buttons:share'}]
-      ]] : null,
-    ]);
+    this.render([
+      ioIcon({value: 'io:close', '@click': this.onCloseClicked}),
+      h3('Статистика'),
+      h2({class: 'answer'}, this.message),
+      div({class: 'board'}, this.boardGrid),
+      div({class: 'grid'}, [
+        span({class: 'count'}, String(this.gamesStarted)),
+        span({class: 'count'}, String(this.gamesFinished)),
+        span({class: 'count'}, String(this.gamesWon)),
+        span('започетих'),
+        span('одиграних'),
+        span('решених'),
+      ]),
+      h4('Дистрибуција погодака:'),
+      div({class: 'distribution'}, [
+        div([span('1'), span({style: {flex: String(this.gameStats[0] / maxGuess)}}, String(this.gameStats[0]))]),
+        div([span('2'), span({style: {flex: String(this.gameStats[1] / maxGuess)}}, String(this.gameStats[1]))]),
+        div([span('3'), span({style: {flex: String(this.gameStats[2] / maxGuess)}}, String(this.gameStats[2]))]),
+        div([span('4'), span({style: {flex: String(this.gameStats[3] / maxGuess)}}, String(this.gameStats[3]))]),
+        div([span('5'), span({style: {flex: String(this.gameStats[4] / maxGuess)}}, String(this.gameStats[4]))]),
+        div([span('6'), span({style: {flex: String(this.gameStats[5] / maxGuess)}}, String(this.gameStats[5]))]),
+        div([span('x'), span({style: {flex: String(this.gameStats[6] / maxGuess)}}, String(this.gameStats[6]))]),
+      ]),
+      (this.win || this.finish) ? button({'@click': this.onShareClicked}, [
+        span('Подели'),
+        ioIcon({value: 'buttons:share'}),
+      ]) : null,
+    ])
   }
+}
+
+export const rechkoPopupStats = function(arg0?: RechkoPopupStatsProps) {
+  return RechkoPopupStats.vConstructor(arg0)
 }

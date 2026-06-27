@@ -1,8 +1,9 @@
-import { IoStorage, RegisterIoElement } from 'io-gui';
-import { $ShowGDPR, $CookiesRequired, $CookiesImprovement, $CookiesAnalitics } from '../game/state.js';
-import {RechkoPopup} from './rechko-popup.js';
+import { Storage, Register, div, span, h3, p } from '@io-gui/core'
+import { ioButton, ioSwitch } from '@io-gui/inputs'
+import { $ShowGDPR, $CookiesRequired, $CookiesImprovement, $CookiesAnalitics } from '../game/state.js'
+import { RechkoPopup, RechkoPopupProps } from './rechko-popup.js'
 
-@RegisterIoElement
+@Register
 export class RechkoPopupGdpr extends RechkoPopup {
   static get Style() {
     return /* css */`
@@ -17,9 +18,9 @@ export class RechkoPopupGdpr extends RechkoPopup {
         margin: 2em 0;
       }
       :host io-button {
-        --iotSpacing: 1em;
-        --iotFieldHeight: 3.5em;
-        flex: 1;  
+        --io_spacing: 1em;
+        --io_fieldHeight: 3.5em;
+        flex: 1;
         font-weight: bold;
         color: #ffffff;
         background-image: none !important;
@@ -34,11 +35,11 @@ export class RechkoPopupGdpr extends RechkoPopup {
         margin-right: 1em;
       }
       :host io-switch {
-        --iotLineHeight: 30px;
-        --iotFieldHeight: 40px;
+        --io_lineHeight: 30px;
+        --io_fieldHeight: 40px;
       }
       :host .option:first-of-type {
-        border-top: 1px solid var(--iotBorderColor);
+        border-top: 1px solid var(--io_borderColor);
       }
       :host .option {
         display: flex;
@@ -46,7 +47,7 @@ export class RechkoPopupGdpr extends RechkoPopup {
         white-space: nowrap;
         font-size: 1.3em;
         line-height: 3em;
-        border-bottom: 1px solid var(--iotBorderColor);
+        border-bottom: 1px solid var(--io_borderColor);
       }
       :host .option > span {
         flex: 1 1 auto;
@@ -61,7 +62,7 @@ export class RechkoPopupGdpr extends RechkoPopup {
         :host p {
           font-size: 0.9em;
         }
-        :host io-button io-label {
+        :host io-button span {
           font-size: 0.8em;
         }
       }
@@ -69,62 +70,69 @@ export class RechkoPopupGdpr extends RechkoPopup {
         :host .option > span {
           font-size: 0.7em;
         }
-        :host io-button io-label {
+        :host io-button span {
           font-size: 0.6em;
         }
       }
-    `;
+    `
   }
   connectedCallback() {
-    super.connectedCallback();
-    this.$.accept?.focus();
+    super.connectedCallback()
+    this.$.accept?.focus()
   }
   decline = () => {
-    $CookiesRequired.value = false;
-    $CookiesImprovement.value = false;
-    $CookiesAnalitics.value = false;
-    this.onCloseClicked();
-    setTimeout(()=> {
-      $ShowGDPR.value = false;
-    }, 500);
-  };
+    $CookiesRequired.value = false
+    $CookiesImprovement.value = false
+    $CookiesAnalitics.value = false
+    this.onCloseClicked()
+    setTimeout(() => {
+      $ShowGDPR.value = false
+    }, 500)
+  }
   accept = () => {
-    $CookiesRequired.value = true;
-    IoStorage.permit();
-    this.onCloseClicked();
-    setTimeout(()=> {
-      $ShowGDPR.value = false;
-    }, 500);
+    $CookiesRequired.value = true
+    Storage.permit()
+    this.onCloseClicked()
+    setTimeout(() => {
+      $ShowGDPR.value = false
+    }, 500)
     try {
       gtag('consent', 'update', {
-        'analytics_storage': this.cookiesAnalitics ? 'granted' : 'denied',
-        'ad_storage': this.cookiesAnalitics ? 'granted' : 'denied'
-      });
-    } catch(error) {
-      console.warn(error);
+        'analytics_storage': $CookiesAnalitics.value ? 'granted' : 'denied',
+        'ad_storage': $CookiesAnalitics.value ? 'granted' : 'denied'
+      })
+    } catch (error) {
+      console.warn(error)
     }
-  };
-  changed() {
-    this.template([
-      ['h3', 'Ова веб страница користи колачиће'],
-      ['p', 'Користимо колачиће како би побољшали Речка. Сакупљамо речи које корисници открију да не постоје у постојећој бази.'],
-      ['p', 'Страница користи и Google Analytics услуге. Сви подаци се користе искључиво у статистичке сврхе, за побољшање искуства играња и не деле се ни са једном компанијом, друштвом или неком трећом групом.'],
-      ['div', {class: 'option'}, [
-        ['span', 'Hеопходни колачићи'],
-        ['io-switch', {value: true, disabled: true}],
-      ]],
-      ['div', {class: 'option'}, [
-        ['span', 'Cакупљање речи'],
-        ['io-switch', {value: $CookiesImprovement}],
-      ]],
-      ['div', {class: 'option'}, [
-        ['span', 'Аналитички колачићи'],
-        ['io-switch', {value: $CookiesAnalitics}],
-      ]],
-      ['div', {class: 'buttons'}, [
-        ['io-button', {label: 'НЕ ПРИХВАТАМ', action: this.decline}],
-        ['io-button', {label: 'ПРИХВАТАМ', id: 'accept', action: this.accept}],
-      ]]
-    ]);
   }
+  ready() {
+    this.mutated()
+  }
+  mutated() {
+    this.render([
+      h3('Ова веб страница користи колачиће'),
+      p('Користимо колачиће како би побољшали Речка. Сакупљамо речи које корисници открију да не постоје у постојећој бази.'),
+      p('Страница користи и Google Analytics услуге. Сви подаци се користе искључиво у статистичке сврхе, за побољшање искуства играња и не деле се ни са једном компанијом, друштвом или неком трећом групом.'),
+      div({class: 'option'}, [
+        span('Hеопходни колачићи'),
+        ioSwitch({value: true, disabled: true}),
+      ]),
+      div({class: 'option'}, [
+        span('Cакупљање речи'),
+        ioSwitch({value: $CookiesImprovement}),
+      ]),
+      div({class: 'option'}, [
+        span('Аналитички колачићи'),
+        ioSwitch({value: $CookiesAnalitics}),
+      ]),
+      div({class: 'buttons'}, [
+        ioButton({label: 'НЕ ПРИХВАТАМ', action: this.decline}),
+        ioButton({label: 'ПРИХВАТАМ', id: 'accept', action: this.accept}),
+      ])
+    ])
+  }
+}
+
+export const rechkoPopupGdpr = function(arg0?: RechkoPopupProps) {
+  return RechkoPopupGdpr.vConstructor(arg0)
 }
