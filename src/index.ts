@@ -268,7 +268,7 @@ export class RechkoApp extends ReactiveElement {
         this.allowInput = false
         setTimeout(() => {
           $ShowStats.value = true
-        }, 500)
+        }, 2500)
         return
       }
       if (row.every((tile: any) => tile.state !== LetterState.INITIAL)) {
@@ -277,7 +277,7 @@ export class RechkoApp extends ReactiveElement {
           this.allowInput = false
           setTimeout(() => {
             $ShowStats.value = true
-          }, 500)
+          }, 2500)
           return
         }
       }
